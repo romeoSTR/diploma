@@ -1,0 +1,59 @@
+<head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}" />
+</head>
+<body>
+    <div class="kinoobzor">
+        <h1>Kinoobzor</h1>
+        <p>Информационный ресурс о кино, сериалах и мультфильмах</p>
+    </div>
+    <div class="topnav">
+        {% if selected == "main" %}
+          <a class="active" href="main">Главная</a>
+        {% else %}
+            <a href="main">Главная</a>
+        {% endif %}
+        {% if selected == "films" %}
+            <a class="active" href="filmss">Фильмы</a>
+        {% else %}
+            <a href="filmss">Фильмы</a>
+        {% endif %}
+        {% if selected == "series" %}
+          <a class="active" href="seriess">Сериалы</a>
+        {% else %}
+            <a href="seriess">Сериалы</a>
+        {% endif %}
+        {% if selected == "movies" %}
+          <a class="active" href="movies">Мультфильмы</a>
+        {% else %}
+            <a href="movies">Мультфильмы</a>
+        {% endif %}
+        {% if not authorized %}
+            {% if selected == "authorization" %}
+              <a class="authorization_active" href="authorization">Вход</a>
+            {% else %}
+                <a class="authorization" href="authorization">Вход</a>
+            {% endif %}
+            {% if selected == "registration" %}
+              <a class="authorization_active" href="registration">Регистрация</a>
+            {% else %}
+                <a class="authorization" href="registration">Регистрация</a>
+            {% endif %}
+        {% else %}
+            <a class="authorization" href="quit">Выход</a>
+        {% endif %}
+    </div>
+
+    {% if items %}
+        {% for item in items %}
+            <div class="items">
+                {% if selected == "films" %}
+                    <a href="film/?id={{item.id}}">{{item.name}}</a><br>
+                {% endif %}
+                <p>{{item.genre}}</p>
+                <p>{{item.director}}</p>
+                <br><p>{{item.year}}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+</body>

@@ -1,0 +1,64 @@
+<head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}" />
+</head>
+<body>
+    <div class="kinoobzor">
+        <h1>Kinoobzor</h1>
+        <p>Информационный ресурс о кино, сериалах и мультфильмах</p>
+    </div>
+    <div class="topnav">
+        {% if selected == "main" %}
+          <a class="active" href="/mainapp/main">Главная</a>
+        {% else %}
+            <a href="/mainapp/main">Главная</a>
+        {% endif %}
+        {% if selected == "films" %}
+          <a class="active" href="/mainapp/filmss">Фильмы</a>
+        {% else %}
+            <a href="/mainapp/filmss">Фильмы</a>
+        {% endif %}
+        {% if selected == "series" %}
+          <a class="active" href="/mainapp/seriess">Сериалы</a>
+        {% else %}
+            <a href="/mainapp/seriess">Сериалы</a>
+        {% endif %}
+        {% if selected == "movies" %}
+          <a class="active" href="/mainapp/movies">Мультфильмы</a>
+        {% else %}
+            <a href="/mainapp/movies">Мультфильмы</a>
+        {% endif %}
+        {% if not authorized %}
+            {% if selected == "authorization" %}
+              <a class="authorization_active" href="/mainapp/authorization">Вход</a>
+            {% else %}
+                <a class="authorization" href="/mainapp/authorization">Вход</a>
+            {% endif %}
+            {% if selected == "registration" %}
+              <a class="authorization_active" href="/mainapp/registration">Регистрация</a>
+            {% else %}
+                <a class="authorization" href="/mainapp/registration">Регистрация</a>
+            {% endif %}
+        {% else %}
+            <a class="authorization" href="quit">Выход</a>
+        {% endif %}
+    </div>
+
+    {% if item %}
+        <div class="item">
+            <pre>{{item.get_info}}</pre><br>
+            <p>{{item.description}}</p>
+        </div>
+        <div class="comments_and_reviews">
+            {% if comments %}
+                <input type="submit" class="active" value="Комментарии" onclick="location.href='/film/comments/?id={{item.id}}'">
+            {% else %}
+                <input type="submit" value="Комментарии" onclick="location.href='comments/?id={{item.id}}'">
+            {% endif %}
+            {% if reviews %}
+                <input type="submit" class="active" value="Рецензии" onclick="show_revisions()">
+            {% else %}
+                <input type="submit" value="Рецензии" onclick="show_revisions()">
+            {% endif %}
+        </div>
+    {% endif %}

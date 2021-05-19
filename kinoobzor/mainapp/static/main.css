@@ -1,0 +1,162 @@
+.kinoobzor{
+    background-color: grey;
+    text-align: center;
+    font-style: italic;
+}
+
+.kinoobzor h1{
+    font-size: 50px;
+    margin-top: 30px;
+}
+
+.kinoobzor p{
+    font-size: 25px;
+    margin-top:10px;
+}
+
+/* Верхняя панель навигации */
+/* Add a black background color to the top navigation */
+.topnav {
+    background-color: black;
+    overflow: hidden;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+/* Add a color to the active/current link */
+.topnav a.active {
+    background-color: white;
+    color: black;
+}
+
+.topnav a.authorization{
+    float: right;
+}
+
+
+.topnav a.authorization_active{
+    float: right;
+    background-color: white;
+    color: black;
+}
+
+/*/////////////////////////////////////////////////////////////*/
+body {
+    border: 2px solid black;
+    border-radius: 5px;
+    background-color: grey;
+}
+
+/* Вид для списка */
+.items {
+    margin-top: 10px;
+    border: 2px solid black;
+    border-radius: 5px;
+    font-size: 15px;
+    font-style: italic;
+}
+
+.items p{
+    margin-left: 15px;
+}
+
+.items a{
+    text-decoration: none;
+    color: black;
+    margin-left: 15px;
+    font-size: 25px;
+    font-style: solid;
+}
+
+.items img{
+    float: left;
+}
+
+/*///////////////////////// */
+/* authorization and registration */
+.logining {
+    margin-top: 100px;
+    text-align: center;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.logining input {
+    border: 2px solid black;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.registration {
+    margin-top: 50px;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.registration input {
+    text-align: center;
+    border: 2px solid black;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.registration input[id=about]{
+    padding: 50px;
+}
+
+.registration input[type=submit]{
+    text-align: center;
+}
+
+/* ///////////////////////*/
+
+.item {
+    margin-top: 20px;
+    border: 2px solid black;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.item pre{
+    font-size: 15px;
+}
+
+.item p{
+    font-size: 20px;
+}
+
+.comments_and_reviews{
+    float: left;
+    margin-top: 10px;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.comments_and_reviews input[type=submit]{
+    background-color: black;
+    color: white;
+}
+
+.comments_and_reviews input[type=submit].active{
+    background-color: white;
+    color: black;
+}
+
+
