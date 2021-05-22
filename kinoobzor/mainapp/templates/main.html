@@ -9,51 +9,67 @@
     </div>
     <div class="topnav">
         {% if selected == "main" %}
-          <a class="active" href="main">Главная</a>
+          <a class="active" href="/mainapp/main">Главная</a>
         {% else %}
-            <a href="main">Главная</a>
+            <a href="/mainapp/main">Главная</a>
         {% endif %}
         {% if selected == "films" %}
-            <a class="active" href="filmss">Фильмы</a>
+            <a class="active" href="/mainapp/filmss">Фильмы</a>
         {% else %}
-            <a href="filmss">Фильмы</a>
+            <a href="/mainapp/filmss">Фильмы</a>
         {% endif %}
         {% if selected == "series" %}
-          <a class="active" href="seriess">Сериалы</a>
+          <a class="active" href="/mainapp/seriess">Сериалы</a>
         {% else %}
-            <a href="seriess">Сериалы</a>
+            <a href="/mainapp/seriess">Сериалы</a>
         {% endif %}
         {% if selected == "movies" %}
-          <a class="active" href="movies">Мультфильмы</a>
+          <a class="active" href="/mainapp/movies">Мультфильмы</a>
         {% else %}
-            <a href="movies">Мультфильмы</a>
+            <a href="/mainapp/movies">Мультфильмы</a>
         {% endif %}
-        {% if not authorized %}
-            {% if selected == "authorization" %}
-              <a class="authorization_active" href="authorization">Вход</a>
-            {% else %}
-                <a class="authorization" href="authorization">Вход</a>
-            {% endif %}
+        {% if not user.is_authenticated %}
+            <a class="authorization" href="/accounts/login">Вход</a>
             {% if selected == "registration" %}
-              <a class="authorization_active" href="registration">Регистрация</a>
+              <a class="authorization_active" href="/mainapp/registration">Регистрация</a>
             {% else %}
-                <a class="authorization" href="registration">Регистрация</a>
+                <a class="authorization" href="/mainapp/registration">Регистрация</a>
             {% endif %}
         {% else %}
-            <a class="authorization" href="quit">Выход</a>
+            <a class="authorization" href="/accounts/logout">Выход</a>
+            {% if selected == "profile" %}
+                <a class="authorization_active" href="/mainapp/profile/?username={{user.get_username}}">{{user.get_username}}</a>
+            {% else %}
+                <a class="authorization" href="/mainapp/profile/?username={{user.get_username}}">{{user.get_username}}</a>
+            {% endif %}
         {% endif %}
     </div>
+
+    {% if message %}
+        {{message}}
+    {% endif %}
 
     {% if items %}
         {% for item in items %}
             <div class="items">
                 {% if selected == "films" %}
-                    <a href="film/?id={{item.id}}">{{item.name}}</a><br>
+                    <a href="film/?id={{item.id}}&amp;item={{selected}}">{{item.name}}</a><br>
+                {% endif %}
+                {% if selected == "series" %}
+                    <a href="series/?id={{item.id}}&amp;item={{selected}}">{{item.name}}</a><br>
                 {% endif %}
                 <p>{{item.genre}}</p>
                 <p>{{item.director}}</p>
                 <br><p>{{item.year}}</p>
             </div>
         {% endfor %}
+    {% endif %}
+
+    {% if profile %}
+        <div class="profile">
+            <p>{{profile.username}}</p><br>
+            <p>{{profile.about}}</p><br>
+            <p>{{profile.birthday}}</p><br>
+        </div>
     {% endif %}
 </body>

@@ -24,23 +24,16 @@
             <a href="/mainapp/seriess">Сериалы</a>
         {% endif %}
         {% if selected == "movies" %}
-          <a class="active" href="/mainapp/movies">Мультфильмы</a>
+          <a class="active" href="/mainapp/moviess">Мультфильмы</a>
         {% else %}
-            <a href="/mainapp/movies">Мультфильмы</a>
+            <a href="/mainapp/moviess">Мультфильмы</a>
         {% endif %}
-        {% if not authorized %}
-            {% if selected == "authorization" %}
-              <a class="authorization_active" href="/mainapp/authorization">Вход</a>
-            {% else %}
-                <a class="authorization" href="/mainapp/authorization">Вход</a>
-            {% endif %}
-            {% if selected == "registration" %}
-              <a class="authorization_active" href="/mainapp/registration">Регистрация</a>
-            {% else %}
-                <a class="authorization" href="/mainapp/registration">Регистрация</a>
-            {% endif %}
+        {% if not user.is_authenticated %}
+            <a class="authorization" href="/accounts/login">Вход</a>
+            <a class="authorization" href="registration">Регистрация</a>
         {% else %}
-            <a class="authorization" href="quit">Выход</a>
+            <a class="authorization" href="/accounts/logout">Выход</a>
+            <a class="authorization" href="/mainapp/profile/?username={{user.get_username}}">{{user.get_username}}</a>
         {% endif %}
     </div>
 
@@ -49,16 +42,41 @@
             <pre>{{item.get_info}}</pre><br>
             <p>{{item.description}}</p>
         </div>
-        <div class="comments_and_reviews">
+        {% if user.is_authenticated %}
+            <div class="topnav">
+                {% if comments %}
+                    <a class="active" href='/mainapp/film/comments/?id={{item.id}}'>Комментарии </a>
+                    {% if add_comment %}
+                        <a class="authorization_active" href="/mainapp/film/comment/add">Добавить</a>
+                    {% else %}
+                        <a class="authorization" href="/mainapp/film/comment/add">Добавить</a>
+                    {% endif %}
+                {% else %}
+                    <a href='/mainapp/film/comments/?id={{item.id}}'>Комментарии </a>
+                {% endif %}
+                {% if reviews %}
+                    <a class="active" href="/mainapp/film/reviews/?id={{item.id}}">Рецензии</a>
+                    {% if add_review %}
+                        <a class="authorization_active" href="/mainapp/film/review/add">Добавить</a>
+                    {% else %}
+                        <a class="authorization" href="/mainapp/film/review/add">Добавить</a>
+                    {% endif %}
+                {% else %}
+                    <a href="/mainapp/film/reviews/?id={{item.id}}">Рецензии</a>
+                {% endif %}
+
+            </div>
             {% if comments %}
-                <input type="submit" class="active" value="Комментарии" onclick="location.href='/film/comments/?id={{item.id}}'">
-            {% else %}
-                <input type="submit" value="Комментарии" onclick="location.href='comments/?id={{item.id}}'">
+                {% for comment in comments %}
+                    {{comment}} передавать через selected
+                {% endfor %}
             {% endif %}
             {% if reviews %}
-                <input type="submit" class="active" value="Рецензии" onclick="show_revisions()">
-            {% else %}
-                <input type="submit" value="Рецензии" onclick="show_revisions()">
+                {% for review in reviews %}
+                    {{review}}
+                {% endfor %}
             {% endif %}
-        </div>
+        {% else %}
+            <h1>Комментарии и рецензии доступны только авторизированным пользователям</h1>
+        {% endif %}
     {% endif %}

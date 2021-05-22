@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
@@ -33,7 +34,7 @@ class Series(models.Model):
 
     @staticmethod
     def get(series_id: int) -> 'Series':
-        return Series.objects.filter(id=series_id)
+        return Series.objects.filter(id=series_id)[0]
 
 
 class Movie(models.Model):
@@ -47,27 +48,35 @@ class Movie(models.Model):
 
     @staticmethod
     def get(movie_id: int) -> 'Movie':
-        return Movie.objects.filter(id=movie_id)
+        return Movie.objects.filter(id=movie_id)[0]
 
 
-class User(models.Model):
-    login = models.CharField(max_length=30)
-    password = models.CharField(max_length=30)
+class UserProfile(models.Model):
+    username = models.CharField(max_length=30, null=False, default='guest')
+    password = models.CharField(max_length=30, null=False, default='guest')
     email = models.EmailField(null=False)
     birthday = models.DateField(null=False)
     about = models.TextField(null=False)
     photo = models.ImageField(blank=True)
 
+    @staticmethod
+    def get(profile_id: int) -> 'UserProfile':
+        return UserProfile.objects.filter(id=profile_id)[0]
+
+    @staticmethod
+    def get_by_username(username: str) -> 'UserProfile':
+        return UserProfile.objects.filter(username=username)[0]
+
 
 class FilmComment(models.Model):
-    author_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     text = models.TextField(max_length=120)
     date_published = models.DateField(null=False)
     film_id = models.ForeignKey(Film, on_delete=models.CASCADE)
 
 
 class FilmReview(models.Model):
-    author_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     text = models.TextField(max_length=500)
     is_positive = models.BooleanField(null=False)
     date_published = models.DateField(null=False)

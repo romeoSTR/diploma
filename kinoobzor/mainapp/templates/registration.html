@@ -11,18 +11,14 @@
             <a href="main">Главная</a>
             <a href="filmss">Фильмы</a>
             <a href="seriess">Сериалы</a>
-            <a href="moviess">Мультфильмы</a>
-            <a class="authorization" href="authorization">Вход</a>
+            <a href="movies">Мультфильмы</a>
+            <a class="authorization" href="/accounts/login">Вход</a>
             <a class="authorization_active" href="registration">Регистрация</a>
     </div>
     <div class="registration">
-        <form>
-            <input type="text" id="login" placeholder="Логин">
-            <input type="text" id="pass" placeholder="Пароль"><br>
-            <input type="text" id=email" placeholder="email"><br>
-            <input type="text" id="about" placeholder="О себе"><br>
-            <input type="date" id="birthday" placeholder="Дата рождения"><br>
-            <input type="file" id="photo" placeholder="Фото профиля"><br>
+        <form method="post" action="/mainapp/finish" >
+            {% csrf_token %}
+            {{form.as_p}}
             <input type="submit" value="Зарегистрироваться">
         </form>
     </div>

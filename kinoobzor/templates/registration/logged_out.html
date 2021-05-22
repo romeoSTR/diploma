@@ -1,0 +1,20 @@
+<head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}" />
+</head>
+<body>
+    <div class="kinoobzor">
+        <h1>Kinoobzor</h1>
+        <p>Информационный ресурс о кино, сериалах и мультфильмах</p>
+    </div>
+    <div class="topnav">
+            <a href="/mainapp/main">Главная</a>
+            <a href="/mainapp/filmss">Фильмы</a>
+            <a href="/mainapp/seriess">Сериалы</a>
+            <a href="/mainapp/moviess">Мультфильмы</a>
+            <a class="authorization_active" href="/accounts/login">Вход</a>
+            <a class="authorization" href="/mainapp/registration">Регистрация</a>
+    </div>
+    <h1>Вы успешно вышли их своего аккаунта</h1>
+    <a href="/accounts/login">Войти в систему</a>
+</body>
