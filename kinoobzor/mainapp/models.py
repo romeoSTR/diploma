@@ -11,7 +11,7 @@ class Film(models.Model):
     year = models.IntegerField(null=False)
     genre = models.CharField(max_length=100)
     rating = models.FloatField(default=0.0)
-    poster = models.ImageField(blank=True)
+    poster = models.ImageField(upload_to='images', blank=True)
 
     def get_info(self) -> str:
         return f"{self.name} ({self.year})\nРежиссер: {self.director}\n" \
@@ -27,10 +27,10 @@ class Series(models.Model):
     director = models.CharField(max_length=50)
     description = models.TextField(null=False)
     year_start = models.IntegerField(null=False)
-    year_end = models.IntegerField(blank=True)
+    year_end = models.IntegerField(blank=True, null=True)
     genre = models.CharField(max_length=100)
     rating = models.FloatField(default=0.0)
-    poster = models.ImageField(blank=True)
+    poster = models.ImageField(upload_to='images', blank=True)
 
     @staticmethod
     def get(series_id: int) -> 'Series':
@@ -44,7 +44,7 @@ class Movie(models.Model):
     year = models.IntegerField(null=False)
     genre = models.CharField(max_length=100)
     rating = models.FloatField(default=0.0)
-    poster = models.ImageField(blank=True)
+    poster = models.ImageField(upload_to='images', blank=True)
 
     @staticmethod
     def get(movie_id: int) -> 'Movie':
@@ -57,7 +57,7 @@ class UserProfile(models.Model):
     email = models.EmailField(null=False)
     birthday = models.DateField(null=False)
     about = models.TextField(null=False)
-    photo = models.ImageField(blank=True)
+    photo = models.ImageField(upload_to='images', blank=True)
 
     @staticmethod
     def get(profile_id: int) -> 'UserProfile':
@@ -75,9 +75,54 @@ class FilmComment(models.Model):
     film_id = models.ForeignKey(Film, on_delete=models.CASCADE)
 
 
+class SeriesComment(models.Model):
+    author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    text = models.TextField(max_length=120)
+    date_published = models.DateField(null=False)
+    series_id = models.ForeignKey(Series, on_delete=models.CASCADE)
+
+
+class MovieComment(models.Model):
+    author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    text = models.TextField(max_length=120)
+    date_published = models.DateField(null=False)
+    movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE)
+
+
 class FilmReview(models.Model):
     author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     text = models.TextField(max_length=500)
     is_positive = models.BooleanField(null=False)
     date_published = models.DateField(null=False)
     film_id = models.ForeignKey(Film, on_delete=models.CASCADE)
+
+
+class SeriesReview(models.Model):
+    author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    text = models.TextField(max_length=500)
+    is_positive = models.BooleanField(null=False)
+    date_published = models.DateField(null=False)
+    series_id = models.ForeignKey(Series, on_delete=models.CASCADE)
+
+
+class MovieReview(models.Model):
+    author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    text = models.TextField(max_length=500)
+    is_positive = models.BooleanField(null=False)
+    date_published = models.DateField(null=False)
+    movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE)
+
+
+class UserFavoriteFilms(models.Model):
+    user_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    film_id = models.ForeignKey(Film, on_delete=models.CASCADE)
+
+
+class UserFavoriteSeries(models.Model):
+    user_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    series_id = models.ForeignKey(Series, on_delete=models.CASCADE)
+
+
+class UserFavoriteMovies(models.Model):
+    user_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE)

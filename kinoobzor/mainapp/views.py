@@ -2,8 +2,9 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from .forms import UserForm
-from .models import Film, UserProfile
+from .forms import UserForm, CommentaryForm, ReviewForm
+from .models import Film, UserProfile, FilmComment, MovieComment, SeriesComment, FilmReview, SeriesReview, MovieReview, \
+    Series, Movie
 
 
 # Create your views here.
@@ -14,20 +15,30 @@ def main(request):
 
 
 def films(request):
-    return render(request, "main.html", {"selected": "films", "items": Film.objects.order_by('-rating')[:5]})
+    return render(request, "main.html", {"selected": "film", "items": Film.objects.order_by('-rating')})
+
+
+def series(request):
+    return render(request, "main.html", {"selected": "series", "items": Series.objects.order_by('-rating')})
+
+
+def movies(request):
+    return render(request, "main.html", {"selected": "movie", "items": Movie.objects.order_by('-rating')})
 
 
 def current_film(request):
     item = Film.get(request.GET.get("id"))
-    return render(request, "item.html", {"item": item, "selected": "films"})
+    return render(request, "item.html", {"item": item, "selected": "film"})
 
 
-def series(request):
-    return render(request, "main.html", {"selected": "series"})
+def current_series(request):
+    item = Series.get(request.GET.get("id"))
+    return render(request, "item.html", {"item": item, "selected": "series"})
 
 
-def movies(request):
-    return render(request, "main.html", {"selected": "movies"})
+def current_movie(request):
+    item = Movie.get(request.GET.get("id"))
+    return render(request, "item.html", {"item": item, "selected": "movie"})
 
 
 def authorization(request):
@@ -40,13 +51,25 @@ def registration(request):
 
 
 def show_comments(request):
-    item = Film.get(request.GET.get("id"))
-    return render(request, "item.html", {"comments": [1,2,3], "item": item})
+    item_type = request.GET.get("item")
+    if item_type == "film":
+        item = Film.get(request.GET.get("id"))
+    elif item_type == "series":
+        item = Series.get(request.GET.get("id"))
+    else:
+        item = Movie.get(request.GET.get("id"))
+    return render(request, "item.html", {"comments": [1,2,3], "item": item, "selected": item_type})
 
 
 def show_reviews(request):
-    item = Film.get(request.GET.get("id"))
-    return render(request, "item.html", {"reviews": [1,2,3], "item": item})
+    item_type = request.GET.get("item")
+    if item_type == "film":
+        item = Film.get(request.GET.get("id"))
+    elif item_type == "series":
+        item = Series.get(request.GET.get("id"))
+    else:
+        item = Movie.get(request.GET.get("id"))
+    return render(request, "item.html", {"reviews": [1,2,3], "item": item, "selected": item_type})
 
 
 def finish_or_repeat_registration(request):
@@ -73,4 +96,37 @@ def finish_or_repeat_registration(request):
 def profile(request):
     profile = UserProfile.get_by_username(request.GET.get("username"))
     return render(request, "main.html", {"selected": "profile", "profile": profile})
+
+
+def add_comment(request):
+    item_type = request.GET.get("item")
+    if item_type == "film":
+        item = Film.get(request.GET.get("id"))
+    elif item_type == "series":
+        item = Series.get(request.GET.get("id"))
+    else:
+        item = Movie.get(request.GET.get("id"))
+    form_data = CommentaryForm()
+    return render(request, "item.html", {"comments": [1,2,3], "form": form_data, "selected":item_type, "item": item, "add_comment": 1})
+
+
+def add_review(request):
+    print(1)
+    item_type = request.GET.get("item")
+    if item_type == "film":
+        item = Film.get(request.GET.get("id"))
+    elif item_type == "series":
+        item = Series.get(request.GET.get("id"))
+    else:
+        item = Movie.get(request.GET.get("id"))
+    form_data = ReviewForm()
+    return render(request, "item.html", {"reviews": [1,2,3], "form": form_data, "selected": item_type, "item": item, "add_review": 1})
+
+
+def save_comment(request):
+    return
+
+
+def save_review(request):
+    return
 

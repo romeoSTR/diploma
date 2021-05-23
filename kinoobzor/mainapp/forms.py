@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import UserProfile
+from .models import UserProfile, FilmComment, Series, FilmReview
 
 
 class DateInput(forms.DateInput):
@@ -14,3 +14,19 @@ class UserForm(forms.ModelForm):
             'username', 'password', 'email', 'birthday', 'about', 'photo'
         ]
         widgets = {'birthday': DateInput()}
+
+
+class CommentaryForm(forms.ModelForm):
+    class Meta:
+        model = FilmComment
+        fields = [
+            'text'
+        ]
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = FilmReview
+        fields = [
+            'text', 'is_positive'
+        ]

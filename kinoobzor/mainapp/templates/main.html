@@ -13,7 +13,7 @@
         {% else %}
             <a href="/mainapp/main">Главная</a>
         {% endif %}
-        {% if selected == "films" %}
+        {% if selected == "film" %}
             <a class="active" href="/mainapp/filmss">Фильмы</a>
         {% else %}
             <a href="/mainapp/filmss">Фильмы</a>
@@ -23,7 +23,7 @@
         {% else %}
             <a href="/mainapp/seriess">Сериалы</a>
         {% endif %}
-        {% if selected == "movies" %}
+        {% if selected == "movie" %}
           <a class="active" href="/mainapp/movies">Мультфильмы</a>
         {% else %}
             <a href="/mainapp/movies">Мультфильмы</a>
@@ -52,12 +52,8 @@
     {% if items %}
         {% for item in items %}
             <div class="items">
-                {% if selected == "films" %}
-                    <a href="film/?id={{item.id}}&amp;item={{selected}}">{{item.name}}</a><br>
-                {% endif %}
-                {% if selected == "series" %}
-                    <a href="series/?id={{item.id}}&amp;item={{selected}}">{{item.name}}</a><br>
-                {% endif %}
+                <img src="{{item.poster.url}}" width="125" height="125">
+                <a href="{{selected}}/?id={{item.id}}&amp;item={{selected}}">{{item.name}}</a><br>
                 <p>{{item.genre}}</p>
                 <p>{{item.director}}</p>
                 <br><p>{{item.year}}</p>

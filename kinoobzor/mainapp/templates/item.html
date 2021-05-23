@@ -13,7 +13,7 @@
         {% else %}
             <a href="/mainapp/main">Главная</a>
         {% endif %}
-        {% if selected == "films" %}
+        {% if selected == "film" %}
           <a class="active" href="/mainapp/filmss">Фильмы</a>
         {% else %}
             <a href="/mainapp/filmss">Фильмы</a>
@@ -23,7 +23,7 @@
         {% else %}
             <a href="/mainapp/seriess">Сериалы</a>
         {% endif %}
-        {% if selected == "movies" %}
+        {% if selected == "movie" %}
           <a class="active" href="/mainapp/moviess">Мультфильмы</a>
         {% else %}
             <a href="/mainapp/moviess">Мультфильмы</a>
@@ -45,27 +45,40 @@
         {% if user.is_authenticated %}
             <div class="topnav">
                 {% if comments %}
-                    <a class="active" href='/mainapp/film/comments/?id={{item.id}}'>Комментарии </a>
+                    <a class="active" href='/mainapp/{{selected}}/comments/?id={{item.id}}&amp;item={{selected}}'>Комментарии </a>
                     {% if add_comment %}
-                        <a class="authorization_active" href="/mainapp/film/comment/add">Добавить</a>
+                        <a class="authorization_active" href="/mainapp/{{selected}}/comment/add_comment/?id={{item.id}}&amp;item={{selected}}">Добавить</a>
                     {% else %}
-                        <a class="authorization" href="/mainapp/film/comment/add">Добавить</a>
+                        <a class="authorization" href="/mainapp/{{selected}}/comment/add_comment/?id={{item.id}}&amp;item={{selected}}">Добавить</a>
                     {% endif %}
                 {% else %}
-                    <a href='/mainapp/film/comments/?id={{item.id}}'>Комментарии </a>
+                    <a href='/mainapp/{{selected}}/comments/?id={{item.id}}&amp;item={{selected}}'>Комментарии </a>
                 {% endif %}
                 {% if reviews %}
-                    <a class="active" href="/mainapp/film/reviews/?id={{item.id}}">Рецензии</a>
+                    <a class="active" href="/mainapp/{{selected}}/reviews/?id={{item.id}}&amp;item={{selected}}">Рецензии</a>
                     {% if add_review %}
-                        <a class="authorization_active" href="/mainapp/film/review/add">Добавить</a>
+                        <a class="authorization_active" href="/mainapp/{{selected}}/review/add_review/?id={{item.id}}&amp;item={{selected}}">Добавить</a>
                     {% else %}
-                        <a class="authorization" href="/mainapp/film/review/add">Добавить</a>
+                        <a class="authorization" href="/mainapp/{{selected}}/review/add_review/?id={{item.id}}&amp;item={{selected}}">Добавить</a>
                     {% endif %}
                 {% else %}
-                    <a href="/mainapp/film/reviews/?id={{item.id}}">Рецензии</a>
+                    <a href="/mainapp/{{selected}}/reviews/?id={{item.id}}&amp;item={{selected}}">Рецензии</a>
                 {% endif %}
-
             </div>
+            {% if add_comment %}
+                <form method="post" action="/mainapp/save_comment/?id={{item.id}}&amp;item={{selected}}" >
+                    {% csrf_token %}
+                    {{form.as_p}}
+                    <input type="submit" value="Добавить">
+                </form>
+            {% endif %}
+            {% if add_review %}
+                <form method="post" action="/mainapp/save_review/?id={{item.id}}&amp;item={{selected}}" >
+                    {% csrf_token %}
+                    {{form.as_p}}
+                    <input type="submit" value="Добавить">
+                </form>
+            {% endif %}
             {% if comments %}
                 {% for comment in comments %}
                     {{comment}} передавать через selected
