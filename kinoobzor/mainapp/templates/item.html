@@ -24,9 +24,9 @@
             <a href="/mainapp/seriess">Сериалы</a>
         {% endif %}
         {% if selected == "movie" %}
-          <a class="active" href="/mainapp/moviess">Мультфильмы</a>
+          <a class="active" href="/mainapp/movies">Мультфильмы</a>
         {% else %}
-            <a href="/mainapp/moviess">Мультфильмы</a>
+            <a href="/mainapp/movies">Мультфильмы</a>
         {% endif %}
         {% if not user.is_authenticated %}
             <a class="authorization" href="/accounts/login">Вход</a>
@@ -39,6 +39,7 @@
 
     {% if item %}
         <div class="item">
+            <img src="{{item.poster.url}}" width="200" height="250">
             <pre>{{item.get_info}}</pre><br>
             <p>{{item.description}}</p>
         </div>
@@ -66,28 +67,61 @@
                 {% endif %}
             </div>
             {% if add_comment %}
-                <form method="post" action="/mainapp/save_comment/?id={{item.id}}&amp;item={{selected}}" >
+                <form method="post" action="/mainapp/save_comment/?id={{item.id}}&amp;item={{selected}}&amp;user={{user.get_username}}" >
                     {% csrf_token %}
                     {{form.as_p}}
                     <input type="submit" value="Добавить">
                 </form>
             {% endif %}
             {% if add_review %}
-                <form method="post" action="/mainapp/save_review/?id={{item.id}}&amp;item={{selected}}" >
+                <form method="post" action="/mainapp/save_review/?id={{item.id}}&amp;item={{selected}}&amp;user={{user.get_username}}" >
                     {% csrf_token %}
                     {{form.as_p}}
                     <input type="submit" value="Добавить">
                 </form>
             {% endif %}
             {% if comments %}
-                {% for comment in comments %}
-                    {{comment}} передавать через selected
-                {% endfor %}
+                {% if comments == "Нет комментариев" %}
+                    <h1>{{comments}}</h1>
+                {% else %}
+                    {% for comment in comments %}
+                        <div class="comment_or_review">
+                            <a href="/profile" >{{comment.author_id.username}}</a>
+                            <p1>{{comment.date_published}}</p1>
+                            <p>{{comment.text}}</p>
+                            {% if comment.author_id.username == user.get_username %}
+                                <a class="delete" href="/mainapp/delete_comment/?id={{item.id}}&amp;item={{selected}}&amp;comment={{comment.id}}">Удалить</a>
+                            {% else %}
+                                <p1>{{comment.dislikes}} &#128078; {{comment.likes}} &#128077;</p1>
+                            {% endif %}
+                            <br><br>
+                        </div>
+                    {% endfor %}
+                {% endif %}
             {% endif %}
             {% if reviews %}
-                {% for review in reviews %}
-                    {{review}}
-                {% endfor %}
+                {% if reviews == "Нет рецензий" %}
+                    <h1>{{reviews}}</h1>
+                {% else %}
+                    {% for review in reviews %}
+                        <div class="comment_or_review">
+                            <a href="/profile" >{{review.author_id.username}}</a>
+                            <p1>{{review.date_published}}</p1><br><br>
+                            {% if review.is_positive == True %}
+                                <p2>{{review.text}}</p2>
+                            {% else %}
+                                <p3>{{review.text}}</p3>
+                            {% endif %}
+                            <br>
+                            {% if review.author_id.username == user.get_username %}
+                                <a class="delete" href="/mainapp/delete_review/?id={{item.id}}&amp;item={{selected}}&amp;review={{review.id}}">Удалить</a>
+                            {% else %}
+                                <p1>{{review.dislikes}} &#128078; {{review.likes}} &#128077;</p1>
+                            {% endif %}
+                            <br><br>
+                        </div>
+                    {% endfor %}
+                {% endif %}
             {% endif %}
         {% else %}
             <h1>Комментарии и рецензии доступны только авторизированным пользователям</h1>

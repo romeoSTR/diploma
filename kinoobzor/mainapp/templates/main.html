@@ -52,20 +52,35 @@
     {% if items %}
         {% for item in items %}
             <div class="items">
-                <img src="{{item.poster.url}}" width="125" height="125">
-                <a href="{{selected}}/?id={{item.id}}&amp;item={{selected}}">{{item.name}}</a><br>
+                <img src="{{item.poster.url}}" width="125" height="165">
+                <p class="info">
+                    Комментариев:{{item.get_count_of_comments}}
+                    Рецензий:{{item.get_count_of_reviews}}
+                    Оценка:{{item.rating}}
+                    <button>♡♥</button>
+                </p>
+                <a href="{{selected}}/?id={{item.id}}&amp;item={{selected}}">{{item.name}}</a>
+                {% if selected == "series" %}
+                    ({{item.get_years}})
+                {% else %}
+                    ({{item.year}})
+                {% endif %}
                 <p>{{item.genre}}</p>
                 <p>{{item.director}}</p>
-                <br><p>{{item.year}}</p>
             </div>
         {% endfor %}
     {% endif %}
 
     {% if profile %}
         <div class="profile">
-            <p>{{profile.username}}</p><br>
-            <p>{{profile.about}}</p><br>
-            <p>{{profile.birthday}}</p><br>
+            {% if profile.photo %}
+                <img src="{{profile.photo.url}}" width="250" height="250">
+            {% endif %}
+            <p>{{profile.username}}</p>
+            <p>{{profile.about}}</p>
+            <p>{{profile.birthday}}</p>
+            <p>Подписчиков: {{profile.get_subscribers_count}}</p>
+            <p>Подписки: {{profile.get_subscriptions_count}}</p>
         </div>
     {% endif %}
 </body>
