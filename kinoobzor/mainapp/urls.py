@@ -27,4 +27,6 @@ urlpatterns = [
     url(r'^series/', views.current_series, name='current_series'),
     url(r'finish', views.finish_or_repeat_registration, name="finish_or_repeat_registration"),
     url(r'profile', views.profile, name="profile"),
+    url(r'add_to_favorites', views.add_to_favorites, name='add_to_favorites'),
+    url(r'del_from_favorites', views.delete_from_favorites, name='delete_from_favorites'),
 ]

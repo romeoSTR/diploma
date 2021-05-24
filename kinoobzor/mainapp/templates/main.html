@@ -57,7 +57,13 @@
                     Комментариев:{{item.get_count_of_comments}}
                     Рецензий:{{item.get_count_of_reviews}}
                     Оценка:{{item.rating}}
-                    <button>♡♥</button>
+                    {% if user.is_authenticated %}
+                    {% if item.id in favorites %}
+                        <a href="/mainapp/del_from_favorites/?id={{item.id}}&amp;item={{selected}}">♥</a>
+                    {% else %}
+                        <a href="/mainapp/add_to_favorites/?id={{item.id}}&amp;item={{selected}}">♡</a>
+                    {% endif %}
+                {% endif %}
                 </p>
                 <a href="{{selected}}/?id={{item.id}}&amp;item={{selected}}">{{item.name}}</a>
                 {% if selected == "series" %}
@@ -81,6 +87,11 @@
             <p>{{profile.birthday}}</p>
             <p>Подписчиков: {{profile.get_subscribers_count}}</p>
             <p>Подписки: {{profile.get_subscriptions_count}}</p>
+            {% if profile.get_favorite_films %}
+                {% for item in profile.get_favorite_films %}
+                    {{item}}<br>
+                {% endfor %}
+            {% endif %}
         </div>
     {% endif %}
 </body>

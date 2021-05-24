@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from .forms import UserForm, CommentaryForm, ReviewForm
 from .models import Film, UserProfile, FilmComment, MovieComment, SeriesComment, FilmReview, SeriesReview, MovieReview, \
-    Series, Movie
+    Series, Movie, UserFavoriteFilms, UserFavoriteMovies, UserFavoriteSeries
 import datetime
 
 
@@ -16,15 +16,34 @@ def main(request):
 
 
 def films(request):
-    return render(request, "main.html", {"selected": "film", "items": Film.objects.order_by('-rating')})
+    user = request.user
+    profile = UserProfile.get_by_username(user)
+    if profile:
+        return render(request, "main.html", {"selected": "film", "items": Film.objects.order_by('-rating'),
+                                             "favorites": profile.get_favorite_films_ids()})
+    else:
+        return render(request, "main.html", {"selected": "film", "items": Film.objects.order_by('-rating')})
 
 
 def series(request):
-    return render(request, "main.html", {"selected": "series", "items": Series.objects.order_by('-rating')})
+    user = request.user
+    profile = UserProfile.get_by_username(user)
+    if profile:
+        return render(request, "main.html", {"selected": "series", "items": Series.objects.order_by('-rating'),
+                                             "favorites": profile.get_favorite_series_ids()})
+    else:
+        return render(request, "main.html", {"selected": "series", "items": Series.objects.order_by('-rating')})
 
 
 def movies(request):
-    return render(request, "main.html", {"selected": "movie", "items": Movie.objects.order_by('-rating')})
+    user = request.user
+    profile = UserProfile.get_by_username(user)
+    if profile:
+        return render(request, "main.html", {"selected": "movie", "items": Movie.objects.order_by('-rating'),
+                                             "favorites": profile.get_favorite_movies_ids()})
+
+    else:
+        return render(request, "main.html", {"selected": "movie", "items": Movie.objects.order_by('-rating')})
 
 
 def current_film(request):
@@ -247,3 +266,57 @@ def save_review(request):
         return render(request, "item.html",
                       {"reviews": reviews, "form": form_data, "selected": item_type, "item": item, "add_review": 1})
 
+
+def add_to_favorites(request):
+    user = request.user
+    profile = UserProfile.get_by_username(user)
+    item_type = request.GET.get("item")
+    if item_type == "film":
+        item = Film.get(request.GET.get("id"))
+        favorite = UserFavoriteFilms()
+        favorite.film_id = item
+        favorite.user_id = profile
+        favorite.save()
+        items = Film.objects.order_by('-rating')
+        favorites = profile.get_favorite_films_ids()
+    elif item_type == "series":
+        item = Series.get(request.GET.get("id"))
+        favorite = UserFavoriteSeries()
+        favorite.series_id = item
+        favorite.user_id = profile
+        favorite.save()
+        items = Series.objects.order_by('-rating')
+        favorites = profile.get_favorite_series_ids()
+    else:
+        item = Movie.get(request.GET.get("id"))
+        favorite = UserFavoriteMovies()
+        favorite.movie_id = item
+        favorite.user_id = profile
+        favorite.save()
+        items = Movie.objects.order_by('-rating')
+        favorites = profile.get_favorite_movies_ids()
+    return render(request, "main.html", {"selected": item_type, "items": items,
+                                         "favorites": favorites})
+
+
+def delete_from_favorites(request):
+    user = request.user
+    profile = UserProfile.get_by_username(user)
+    item_type = request.GET.get("item")
+    if item_type == "film":
+        id = Film.get(request.GET.get("id"))
+        UserProfile.delete_favorite_film(id, profile.id)
+        items = Film.objects.order_by('-rating')
+        favorites = profile.get_favorite_films_ids()
+    elif item_type == "series":
+        id = Series.get(request.GET.get("id"))
+        UserProfile.delete_favorite_series(id, profile.id)
+        items = Series.objects.order_by('-rating')
+        favorites = profile.get_favorite_series_ids()
+    else:
+        id = Movie.get(request.GET.get("id"))
+        UserProfile.delete_favorite_movie(id, profile.id)
+        items = Movie.objects.order_by('-rating')
+        favorites = profile.get_favorite_movies_ids()
+    return render(request, "main.html", {"selected": item_type, "items": items,
+                                         "favorites": favorites})

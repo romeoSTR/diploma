@@ -149,6 +149,51 @@ class UserProfile(models.Model):
     def get_subscriptions(self):
         return UserSubscribers.objects.filter(sub_id=self.id)
 
+    def get_favorite_films(self):
+        return UserFavoriteFilms.objects.filter(user_id=self.id)
+
+    def get_favorite_series(self):
+        return UserFavoriteSeries.objects.filter(user_id=self.id)
+
+    def get_favorite_movies(self):
+        return UserFavoriteMovies.objects.filter(user_id=self.id)
+
+    def get_favorite_films_ids(self):
+        films = UserFavoriteFilms.objects.filter(user_id=self.id)
+        ids = []
+        for item in films:
+            ids.append(item.film_id.id)
+        return ids
+
+    def get_favorite_series_ids(self):
+        series = UserFavoriteSeries.objects.filter(user_id=self.id)
+        ids = []
+        for item in series:
+            ids.append(item.series_id.id)
+        return ids
+
+    def get_favorite_movies_ids(self):
+        movies = UserFavoriteMovies.objects.filter(user_id=self.id)
+        ids = []
+        for item in movies:
+            ids.append(item.movie_id.id)
+        return ids
+
+    @staticmethod
+    def delete_favorite_film(film_id: int, user_id: int):
+        item = UserFavoriteFilms.get(user_id, film_id)
+        item.delete()
+
+    @staticmethod
+    def delete_favorite_series(series_id: int, user_id: int):
+        item = UserFavoriteSeries.get(user_id, series_id)
+        item.delete()
+
+    @staticmethod
+    def delete_favorite_movie(movie_id: int, user_id: int):
+        item = UserFavoriteMovies.get(user_id, movie_id)
+        item.delete()
+
 
 class FilmComment(models.Model):
     author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
@@ -234,16 +279,27 @@ class UserFavoriteFilms(models.Model):
     user_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     film_id = models.ForeignKey(Film, on_delete=models.CASCADE)
 
+    @staticmethod
+    def get(user_id: int, film_id: int):
+        return UserFavoriteFilms.objects.filter(user_id=user_id, film_id=film_id)
+
 
 class UserFavoriteSeries(models.Model):
     user_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     series_id = models.ForeignKey(Series, on_delete=models.CASCADE)
+
+    @staticmethod
+    def get(user_id: int, series_id: int):
+        return UserFavoriteSeries.objects.filter(user_id=user_id, series_id=series_id)
 
 
 class UserFavoriteMovies(models.Model):
     user_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
+    @staticmethod
+    def get(user_id: int, movie_id: int):
+        return UserFavoriteMovies.objects.filter(user_id=user_id, movie_id=movie_id)
 
 class NewsForMain(models.Model):
     user_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
