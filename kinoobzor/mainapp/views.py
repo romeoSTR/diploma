@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from .forms import UserForm, CommentaryForm, ReviewForm
 from .models import Film, UserProfile, FilmComment, MovieComment, SeriesComment, FilmReview, SeriesReview, MovieReview, \
-    Series, Movie, UserFavoriteFilms, UserFavoriteMovies, UserFavoriteSeries
+    Series, Movie, UserFavoriteFilms, UserFavoriteMovies, UserFavoriteSeries, UserSubscribers, NewsForMain
 import datetime
 
 
@@ -12,7 +12,13 @@ import datetime
 
 
 def main(request):
-    return render(request, "main.html", {"selected": "main"})
+    user = request.user
+    try:
+        profile = UserProfile.get_by_username(user)
+        news = NewsForMain.get_user_news(profile)
+        return render(request, "main.html", {"selected": "main", "news": news})
+    except:
+        return render(request, "main.html", {"selected": "main"})
 
 
 def films(request):
@@ -203,21 +209,31 @@ def save_comment(request):
         if is_valid:
             comment = FilmComment()
             comment.film_id = item
+            comment_item = 'фильм'
     elif item_type == "series":
         item = Series.get(request.GET.get("id"))
         if is_valid:
             comment = SeriesComment()
             comment.series_id = item
+            comment_item = 'сериал'
     else:
         item = Movie.get(request.GET.get("id"))
         if is_valid:
             comment = MovieComment()
             comment.movie_id = item
+            comment_item = 'мультфильм'
     if is_valid:
         comment.text = text
         comment.author_id = user
         comment.date_published = datetime.date.today()
         comment.save()
+        user_subs = UserSubscribers.get_user_subs(user.id)
+        for sub in user_subs:
+            news = NewsForMain()
+            news.user_id = sub.sub_id
+            news.text = f"Пользователь {user.username} прокомментировал {comment_item} '{item.name}'"
+            news.date_published = datetime.date.today()
+            news.save()
         comments = item.get_comments()
         return render(request, "item.html",
                       {"comments": comments, "selected": item_type, "item": item})
@@ -242,22 +258,32 @@ def save_review(request):
         if is_valid:
             review = FilmReview()
             review.film_id = item
+            review_item = 'фильм'
     elif item_type == "series":
         item = Series.get(request.GET.get("id"))
         if is_valid:
             review = SeriesReview()
             review.series_id = item
+            review_item = 'сериал'
     else:
         item = Movie.get(request.GET.get("id"))
         if is_valid:
             review = MovieReview()
             review.movie_id = item
+            review_item = 'мультфильм'
     if is_valid:
         review.text = text
         review.author_id = user
         review.is_positive = is_positive
         review.date_published = datetime.date.today()
         review.save()
+        user_subs = UserSubscribers.get_user_subs(user.id)
+        for sub in user_subs:
+            news = NewsForMain()
+            news.user_id = sub.sub_id
+            news.text = f"Пользователь {user.username} отрецензировал {review_item} '{item.name}'"
+            news.date_published = datetime.date.today()
+            news.save()
         reviews = item.get_reviews()
         return render(request, "item.html",
                       {"reviews": reviews, "selected": item_type, "item": item})
@@ -326,19 +352,20 @@ def show_favorites(request):
     username = request.GET.get("username")
     profile = UserProfile.get_by_username(username)
     return render(request, "main.html", {"selected": "profile", "profile": profile, "favorites": 1})
-    return
 
 
 def show_subscribers(request):
     username = request.GET.get("username")
     profile = UserProfile.get_by_username(username)
-    return render(request, "main.html", {"selected": "profile", "profile": profile, "subscribers": 1})
+    subs = UserSubscribers.get_user_subs(profile.id)
+    return render(request, "main.html", {"selected": "profile", "profile": profile, "subscribers": 1, "subs": subs})
 
 
 def show_subscriptions(request):
     username = request.GET.get("username")
     profile = UserProfile.get_by_username(username)
-    return render(request, "main.html", {"selected": "profile", "profile": profile, "subscriptions": 1})
+    subs = UserSubscribers.get_user_subscriptions(profile.id)
+    return render(request, "main.html", {"selected": "profile", "profile": profile, "subscriptions": 1, "subs": subs})
 
 
 def edit_profile(request):
@@ -370,3 +397,45 @@ def save_edit_profile(request):
         return render(request, "main.html", {"selected": "profile", "profile": user_profile})
     else:
         return render(request, "main.html", {"selected": "profile", "profile": user_profile, "edit": 1, "form": form_data})
+
+
+def sub_on_profile(request):
+    username = request.GET.get("username")
+    current_username = request.user
+    current_user = UserProfile.get_by_username(current_username)
+    user_profile = UserProfile.get_by_username(username)
+    sub = UserSubscribers()
+    sub.user_id = user_profile
+    sub.sub_id = current_user
+    sub.save()
+    news_for_user = NewsForMain()
+    news_for_sub = NewsForMain()
+    news_for_user.user_id = user_profile
+    news_for_sub.user_id = current_user
+    news_for_user.date_published = datetime.date.today()
+    news_for_sub.date_published = datetime.date.today()
+    news_for_user.text = f"Пользователь {current_user.username} подписался на ваши обновления"
+    news_for_sub.text = f"Вы подписались на обновления пользователя {user_profile.username}"
+    news_for_sub.save()
+    news_for_user.save()
+    return render(request, "main.html", {"selected": "profile", "profile": user_profile})
+
+
+def unsub_on_profile(request):
+    username = request.GET.get("username")
+    current_username = request.user
+    current_user = UserProfile.get_by_username(current_username)
+    user_profile = UserProfile.get_by_username(username)
+    sub = UserSubscribers.get_by_sub_and_user_id(user_profile.id, current_user.id)
+    sub.delete()
+    news_for_user = NewsForMain()
+    news_for_sub = NewsForMain()
+    news_for_user.user_id = user_profile
+    news_for_sub.user_id = current_user
+    news_for_user.date_published = datetime.date.today()
+    news_for_sub.date_published = datetime.date.today()
+    news_for_user.text = f"Пользователь {current_user.username} отписался от вас"
+    news_for_sub.text = f"Вы отписались от обновлений пользователя {user_profile.username}"
+    news_for_sub.save()
+    news_for_user.save()
+    return render(request, "main.html", {"selected": "profile", "profile": user_profile})

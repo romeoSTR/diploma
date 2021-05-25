@@ -224,7 +224,7 @@ body {
 }
 
 .profile {
-    font-size: 20px;
+    font-size: 15px;
     height: 250px;
     text-align: center;
 }
@@ -255,6 +255,38 @@ body {
     text-decoration: none;
     color: black;
     font-style: solid;
+}
+
+
+.subs{
+    margin-top: 5px;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.subs a{
+    font-size: 25px;
+    text-decoration: none;
+    color: black;
+    text-align: center;
+    margin-right: 20px;
+}
+
+.subs a.block{
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.subs img{
+    margin-top: 5px;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.news{
+    margin-top: 5px;
+    border: 2px solid black;
+    border-radius: 5px;
 }
 
 

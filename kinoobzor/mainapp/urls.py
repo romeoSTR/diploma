@@ -34,4 +34,6 @@ urlpatterns = [
     url(r'subscriptions', views.show_subscriptions, name='show_subscriptions'),
     url(r'edit', views.edit_profile, name='edit_profile'),
     url(r'save_edit_profile', views.save_edit_profile, name='save_edit_profile'),
+    url(r'sub', views.sub_on_profile, name='sub_on_profile'),
+    url(r'unsub', views.unsub_on_profile, name='unsub_on_profile'),
 ]

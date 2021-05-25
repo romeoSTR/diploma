@@ -194,6 +194,17 @@ class UserProfile(models.Model):
         item = UserFavoriteMovies.get(user_id, movie_id)
         item.delete()
 
+    def get_count_of_comments(self):
+        films = FilmComment.objects.filter(author_id=self.id).count()
+        series = SeriesComment.objects.filter(author_id=self.id).count()
+        movies = MovieComment.objects.filter(author_id=self.id).count()
+        return films+series+movies
+
+    def get_count_of_reviews(self):
+        films = FilmReview.objects.filter(author_id=self.id).count()
+        series = SeriesReview.objects.filter(author_id=self.id).count()
+        movies = MovieReview.objects.filter(author_id=self.id).count()
+        return films+series+movies
 
 class FilmComment(models.Model):
     author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
@@ -301,12 +312,29 @@ class UserFavoriteMovies(models.Model):
     def get(user_id: int, movie_id: int):
         return UserFavoriteMovies.objects.filter(user_id=user_id, movie_id=movie_id)
 
+
 class NewsForMain(models.Model):
     user_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     text = models.TextField(max_length=150)
     date_published = models.DateField(null=False)
 
+    @staticmethod
+    def get_user_news(user_id: int):
+        return NewsForMain.objects.filter(user_id=user_id).order_by('-date_published')
+
 
 class UserSubscribers(models.Model):
     user_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="user")
     sub_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="sub")
+
+    @staticmethod
+    def get_by_sub_and_user_id(user_id: int, sub_id: int):
+        return UserSubscribers.objects.filter(user_id=user_id, sub_id=sub_id)[0]
+
+    @staticmethod
+    def get_user_subs(user_id: int):
+        return UserSubscribers.objects.filter(user_id=user_id)
+
+    @staticmethod
+    def get_user_subscriptions(sub_id: int):
+        return UserSubscribers.objects.filter(sub_id=sub_id)

@@ -49,6 +49,17 @@
         {{message}}
     {% endif %}
 
+
+    {% if news %}
+        {% for item in news %}
+            <div class="comment_or_review">
+                <p>{{item.text}}</p>
+                <p1>{{item.date_published}}</p1>
+                <br>
+            </div>
+        {% endfor %}
+    {% endif %}
+
     {% if items %}
         {% for item in items %}
             <div class="items">
@@ -87,6 +98,8 @@
             <p>{{profile.birthday}}</p>
             <p>Подписчиков: {{profile.get_subscribers_count}}</p>
             <p>Подписки: {{profile.get_subscriptions_count}}</p>
+            <p>Комментариев: {{profile.get_count_of_comments}}</p>
+            <p>Рецензий: {{profile.get_count_of_reviews}}</p>
         </div><br>
         <div class="topnav">
             {% if favorites %}
@@ -112,9 +125,9 @@
                 {% endif %}
             {% else %}
                 {% if user_in_subs %}
-                    <a class="authorization" href="">Подписаться</a>
+                    <a class="authorization" href="/mainapp/unsub/?username={{profile.username}}">Отписаться</a>
                 {% else %}
-                    <a class="authorization">Отписаться</a>
+                    <a class="authorization" href="/mainapp/sub/?username={{profile.username}}">Подписаться</a>
                 {% endif %}
             {% endif %}
         </div>
@@ -160,11 +173,25 @@
         {% endif %}
 
         {% if subscribers %}
+            {% for sub in subs %}
+                <div class="subs">
+                    <img src="{{sub.sub_id.photo.url}}"  width="50" height="50">
+                    <a href="/mainapp/profile/?username={{sub.sub_id.username}}">{{sub.sub_id.username}}</a>
+                </div>
+            {% endfor %}
+         {% endif %}
 
-        {% endif %}
 
         {% if subscriptions %}
-
+            {% for sub in subs %}
+                <div class="subs">
+                    <img src="{{sub.user_id.photo.url}}" width="50" height="50">
+                    <a href="/mainapp/profile/?username={{sub.user_id.username}}">{{sub.user_id.username}}</a>
+                    {% if user.get_username == profile.username %}
+                        <a class="block" href="/mainapp/unsub/?username={{sub.user_id.username}}">Отписаться</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
         {% endif %}
 
         {% if edit %}
