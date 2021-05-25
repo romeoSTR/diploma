@@ -86,7 +86,7 @@
                 {% else %}
                     {% for comment in comments %}
                         <div class="comment_or_review">
-                            <a href="/profile" >{{comment.author_id.username}}</a>
+                            <a href="/mainapp/profile/?username={{comment.author_id.username}}" >{{comment.author_id.username}}</a>
                             <p1>{{comment.date_published}}</p1>
                             <p>{{comment.text}}</p>
                             {% if comment.author_id.username == user.get_username %}
@@ -105,7 +105,7 @@
                 {% else %}
                     {% for review in reviews %}
                         <div class="comment_or_review">
-                            <a href="/profile" >{{review.author_id.username}}</a>
+                            <a href="/mainapp/profile/?username={{review.author_id.username}}" >{{review.author_id.username}}</a>
                             <p1>{{review.date_published}}</p1><br><br>
                             {% if review.is_positive == True %}
                                 <p2>{{review.text}}</p2>

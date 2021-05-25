@@ -320,3 +320,53 @@ def delete_from_favorites(request):
         favorites = profile.get_favorite_movies_ids()
     return render(request, "main.html", {"selected": item_type, "items": items,
                                          "favorites": favorites})
+
+
+def show_favorites(request):
+    username = request.GET.get("username")
+    profile = UserProfile.get_by_username(username)
+    return render(request, "main.html", {"selected": "profile", "profile": profile, "favorites": 1})
+    return
+
+
+def show_subscribers(request):
+    username = request.GET.get("username")
+    profile = UserProfile.get_by_username(username)
+    return render(request, "main.html", {"selected": "profile", "profile": profile, "subscribers": 1})
+
+
+def show_subscriptions(request):
+    username = request.GET.get("username")
+    profile = UserProfile.get_by_username(username)
+    return render(request, "main.html", {"selected": "profile", "profile": profile, "subscriptions": 1})
+
+
+def edit_profile(request):
+    username = request.GET.get("username")
+    profile = UserProfile.get_by_username(username)
+    form_data = UserForm(initial={'username': profile.username, 'password': profile.password, 'about': profile.about,
+                                  'birthday': profile.birthday, 'email': profile.email, 'photo': profile.photo})
+    return render(request, "main.html", {"selected": "profile", "profile": profile, "edit": 1, "form": form_data})
+
+
+def save_edit_profile(request):
+    username = request.GET.get("username")
+    user_profile = UserProfile.get_by_username(username)
+    form_data = UserForm(request.POST or None)
+    if form_data.is_valid():
+        username = form_data.cleaned_data.get("username")
+        password = form_data.cleaned_data.get("password")
+        birthday = form_data.cleaned_data.get("birthday")
+        about = form_data.cleaned_data.get("about")
+        email = form_data.cleaned_data.get("email")
+        photo = form_data.cleaned_data.get("photo")
+        user_profile.username = username
+        user_profile.password = password
+        user_profile.email = email
+        user_profile.about = about
+        user_profile.birthday = birthday
+        user_profile.photo = photo
+        user_profile.save()
+        return render(request, "main.html", {"selected": "profile", "profile": user_profile})
+    else:
+        return render(request, "main.html", {"selected": "profile", "profile": user_profile, "edit": 1, "form": form_data})

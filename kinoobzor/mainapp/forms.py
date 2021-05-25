@@ -13,6 +13,9 @@ class UserForm(forms.ModelForm):
         fields = [
             'username', 'password', 'email', 'birthday', 'about', 'photo'
         ]
+        labels = [
+            'Логин', 'Пароль', 'е-mail', 'Дата рождения', 'О себе', 'Фото'
+        ]
         widgets = {'birthday': DateInput()}
 
 

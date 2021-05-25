@@ -29,4 +29,9 @@ urlpatterns = [
     url(r'profile', views.profile, name="profile"),
     url(r'add_to_favorites', views.add_to_favorites, name='add_to_favorites'),
     url(r'del_from_favorites', views.delete_from_favorites, name='delete_from_favorites'),
+    url(r'favorites', views.show_favorites, name='show_favorites'),
+    url(r'subscribers', views.show_subscribers, name='show_subscribers'),
+    url(r'subscriptions', views.show_subscriptions, name='show_subscriptions'),
+    url(r'edit', views.edit_profile, name='edit_profile'),
+    url(r'save_edit_profile', views.save_edit_profile, name='save_edit_profile'),
 ]

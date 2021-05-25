@@ -37,7 +37,7 @@
             {% endif %}
         {% else %}
             <a class="authorization" href="/accounts/logout">Выход</a>
-            {% if selected == "profile" %}
+            {% if selected == "profile" and profile.username == user.get_username %}
                 <a class="authorization_active" href="/mainapp/profile/?username={{user.get_username}}">{{user.get_username}}</a>
             {% else %}
                 <a class="authorization" href="/mainapp/profile/?username={{user.get_username}}">{{user.get_username}}</a>
@@ -87,11 +87,94 @@
             <p>{{profile.birthday}}</p>
             <p>Подписчиков: {{profile.get_subscribers_count}}</p>
             <p>Подписки: {{profile.get_subscriptions_count}}</p>
-            {% if profile.get_favorite_films %}
-                {% for item in profile.get_favorite_films %}
-                    {{item}}<br>
-                {% endfor %}
+        </div><br>
+        <div class="topnav">
+            {% if favorites %}
+                <a class="active" href="/mainapp/favorites/?username={{profile.username}}" >Избранное</a>
+            {% else %}
+                <a href="/mainapp/favorites/?username={{profile.username}}">Избранное</a>
+            {% endif %}
+            {% if subscriptions %}
+                <a class="active" href="/mainapp/subscriptions/?username={{profile.username}}">Подписки</a>
+            {% else %}
+                <a href="/mainapp/subscriptions/?username={{profile.username}}">Подписки</a>
+            {% endif %}
+            {% if subscribers %}
+                <a class="active" href="/mainapp/subscribers/?username={{profile.username}}">Подписчики</a>
+            {% else %}
+                <a href="/mainapp/subscribers/?username={{profile.username}}">Подписчики</a>
+            {% endif %}
+            {% if user.get_username == profile.username %}
+                {% if edit %}
+                    <a class="authorization_active" href="/mainapp/edit/?username={{profile.username}}">Редактирование профиля</a>
+                {% else %}
+                    <a class="authorization" href="/mainapp/edit/?username={{profile.username}}">Редактирование профиля</a>
+                {% endif %}
+            {% else %}
+                {% if user_in_subs %}
+                    <a class="authorization" href="">Подписаться</a>
+                {% else %}
+                    <a class="authorization">Отписаться</a>
+                {% endif %}
             {% endif %}
         </div>
+
+        {% if favorites %}
+            <div class="favorites">
+                {% if profile.get_favorite_films %}
+                    <h1>Фильмы</h1>
+                    <ul>
+                        {% for item in profile.get_favorite_films %}
+                        <li>
+                            <img src="{{item.film_id.poster.url}}" width="125" height="150">
+                            <a href="/mainapp/film/?id={{item.film_id.id}}&amp;item=film">{{item.film_id.name}}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <br>
+                {% if profile.get_favorite_series %}
+                    <h1>Сериалы</h1>
+                    <ul>
+                        {% for item in profile.get_favorite_series %}
+                        <li>
+                            <img src="{{item.series_id.poster.url}}" width="125" height="150">
+                            <a href="/mainapp/series/?id={{item.series_id.id}}&amp;item=series">{{item.series_id.name}}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <br>
+                {% if profile.get_favorite_movies %}
+                    <h1>Мультфильмы</h1>
+                    <ul>
+                        {% for item in profile.get_favorite_movies %}
+                        <li>
+                            <img src="{{item.movie_id.poster.url}}" width="125" height="150">
+                            <a href="/mainapp/movie/?id={{item.movie_id.id}}&amp;item=movie">{{item.movie_id.name}}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if subscribers %}
+
+        {% endif %}
+
+        {% if subscriptions %}
+
+        {% endif %}
+
+        {% if edit %}
+            <form method="post" action="/mainapp/save_edit_profile/?username={{profile.username}}">
+                {% csrf_token %}
+                <table>
+                    {{form.as_table}}
+                </table>
+                 <input type="submit" value="Сохранить изменения">
+            </form>
+        {% endif %}
     {% endif %}
 </body>
