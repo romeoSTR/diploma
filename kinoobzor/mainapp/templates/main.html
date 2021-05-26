@@ -124,10 +124,10 @@
                     <a class="authorization" href="/mainapp/edit/?username={{profile.username}}">Редактирование профиля</a>
                 {% endif %}
             {% else %}
-                {% if user_in_subs %}
-                    <a class="authorization" href="/mainapp/unsub/?username={{profile.username}}">Отписаться</a>
+                {% if user.get_username in profile.get_subs_usernames  %}
+                    <a class="authorization" href="/mainapp/delete_sub/?username={{profile.username}}">Отписаться</a>
                 {% else %}
-                    <a class="authorization" href="/mainapp/sub/?username={{profile.username}}">Подписаться</a>
+                    <a class="authorization" href="/mainapp/subscribe/?username={{profile.username}}">Подписаться</a>
                 {% endif %}
             {% endif %}
         </div>
@@ -188,14 +188,14 @@
                     <img src="{{sub.user_id.photo.url}}" width="50" height="50">
                     <a href="/mainapp/profile/?username={{sub.user_id.username}}">{{sub.user_id.username}}</a>
                     {% if user.get_username == profile.username %}
-                        <a class="block" href="/mainapp/unsub/?username={{sub.user_id.username}}">Отписаться</a>
+                        <a class="block" href="/mainapp/delete_sub/?username={{sub.user_id.username}}">Отписаться</a>
                     {% endif %}
                 </div>
             {% endfor %}
         {% endif %}
 
         {% if edit %}
-            <form method="post" action="/mainapp/save_edit_profile/?username={{profile.username}}">
+            <form method="post" enctype="multipart/form-data" action="/mainapp/save_edit_profile/?username={{profile.username}}">
                 {% csrf_token %}
                 <table>
                     {{form.as_table}}

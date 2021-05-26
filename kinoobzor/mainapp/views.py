@@ -112,7 +112,7 @@ def finish_or_repeat_registration(request):
         birthday = form_data.cleaned_data.get("birthday")
         about = form_data.cleaned_data.get("about")
         email = form_data.cleaned_data.get("email")
-        photo = form_data.cleaned_data.get("photo")
+        photo = request.FILES["photo"]
         User.objects.create_user(username=username, password=password)
         user_profile = UserProfile()
         user_profile.username = username
@@ -386,7 +386,7 @@ def save_edit_profile(request):
         birthday = form_data.cleaned_data.get("birthday")
         about = form_data.cleaned_data.get("about")
         email = form_data.cleaned_data.get("email")
-        photo = form_data.cleaned_data.get("photo")
+        photo = request.FILES["photo"]
         user_profile.username = username
         user_profile.password = password
         user_profile.email = email
@@ -404,24 +404,28 @@ def sub_on_profile(request):
     current_username = request.user
     current_user = UserProfile.get_by_username(current_username)
     user_profile = UserProfile.get_by_username(username)
-    sub = UserSubscribers()
-    sub.user_id = user_profile
-    sub.sub_id = current_user
-    sub.save()
-    news_for_user = NewsForMain()
-    news_for_sub = NewsForMain()
-    news_for_user.user_id = user_profile
-    news_for_sub.user_id = current_user
-    news_for_user.date_published = datetime.date.today()
-    news_for_sub.date_published = datetime.date.today()
-    news_for_user.text = f"Пользователь {current_user.username} подписался на ваши обновления"
-    news_for_sub.text = f"Вы подписались на обновления пользователя {user_profile.username}"
-    news_for_sub.save()
-    news_for_user.save()
-    return render(request, "main.html", {"selected": "profile", "profile": user_profile})
+    try:
+        sub = UserSubscribers.get_by_sub_and_user_id(user_profile.id, current_user.id)
+        return render(request, "main.html", {"selected": "profile", "profile": user_profile})
+    except IndexError:
+        sub = UserSubscribers()
+        sub.user_id = user_profile
+        sub.sub_id = current_user
+        sub.save()
+        news_for_user = NewsForMain()
+        news_for_sub = NewsForMain()
+        news_for_user.user_id = user_profile
+        news_for_sub.user_id = current_user
+        news_for_user.date_published = datetime.date.today()
+        news_for_sub.date_published = datetime.date.today()
+        news_for_user.text = f"Пользователь {current_user.username} подписался на ваши обновления"
+        news_for_sub.text = f"Вы подписались на обновления пользователя {user_profile.username}"
+        news_for_sub.save()
+        news_for_user.save()
+        return render(request, "main.html", {"selected": "profile", "profile": user_profile})
 
 
-def unsub_on_profile(request):
+def delete_sub_on_profile(request):
     username = request.GET.get("username")
     current_username = request.user
     current_user = UserProfile.get_by_username(current_username)

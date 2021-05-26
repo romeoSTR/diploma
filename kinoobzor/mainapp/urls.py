@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^movie/', views.current_movie, name='current_movie'),
     url(r'^series/', views.current_series, name='current_series'),
     url(r'finish', views.finish_or_repeat_registration, name="finish_or_repeat_registration"),
+    url(r'save_edit_profile', views.save_edit_profile, name='save_edit_profile'),
     url(r'profile', views.profile, name="profile"),
     url(r'add_to_favorites', views.add_to_favorites, name='add_to_favorites'),
     url(r'del_from_favorites', views.delete_from_favorites, name='delete_from_favorites'),
@@ -33,7 +34,6 @@ urlpatterns = [
     url(r'subscribers', views.show_subscribers, name='show_subscribers'),
     url(r'subscriptions', views.show_subscriptions, name='show_subscriptions'),
     url(r'edit', views.edit_profile, name='edit_profile'),
-    url(r'save_edit_profile', views.save_edit_profile, name='save_edit_profile'),
-    url(r'sub', views.sub_on_profile, name='sub_on_profile'),
-    url(r'unsub', views.unsub_on_profile, name='unsub_on_profile'),
+    url(r'subscribe', views.sub_on_profile, name='sub_on_profile'),
+    url(r'delete_sub', views.delete_sub_on_profile, name='delete_sub_on_profile'),
 ]

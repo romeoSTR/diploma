@@ -206,6 +206,14 @@ class UserProfile(models.Model):
         movies = MovieReview.objects.filter(author_id=self.id).count()
         return films+series+movies
 
+    def get_subs_usernames(self):
+        subs = self.get_subscribers()
+        names = []
+        for sub in subs:
+            names.append(sub.sub_id.username)
+        return names
+
+
 class FilmComment(models.Model):
     author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     text = models.TextField(max_length=120)
