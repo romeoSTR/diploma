@@ -23,32 +23,32 @@ def main(request):
 
 def films(request):
     user = request.user
-    profile = UserProfile.get_by_username(user)
-    if profile:
+    try:
+        profile = UserProfile.get_by_username(user)
         return render(request, "main.html", {"selected": "film", "items": Film.objects.order_by('-rating'),
                                              "favorites": profile.get_favorite_films_ids()})
-    else:
+    except:
         return render(request, "main.html", {"selected": "film", "items": Film.objects.order_by('-rating')})
 
 
 def series(request):
     user = request.user
-    profile = UserProfile.get_by_username(user)
-    if profile:
+    try:
+        profile = UserProfile.get_by_username(user)
         return render(request, "main.html", {"selected": "series", "items": Series.objects.order_by('-rating'),
                                              "favorites": profile.get_favorite_series_ids()})
-    else:
+    except:
         return render(request, "main.html", {"selected": "series", "items": Series.objects.order_by('-rating')})
 
 
 def movies(request):
     user = request.user
-    profile = UserProfile.get_by_username(user)
-    if profile:
+    try:
+        profile = UserProfile.get_by_username(user)
         return render(request, "main.html", {"selected": "movie", "items": Movie.objects.order_by('-rating'),
                                              "favorites": profile.get_favorite_movies_ids()})
 
-    else:
+    except:
         return render(request, "main.html", {"selected": "movie", "items": Movie.objects.order_by('-rating')})
 
 

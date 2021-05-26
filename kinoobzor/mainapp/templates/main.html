@@ -69,12 +69,12 @@
                     Рецензий:{{item.get_count_of_reviews}}
                     Оценка:{{item.rating}}
                     {% if user.is_authenticated %}
-                    {% if item.id in favorites %}
-                        <a href="/mainapp/del_from_favorites/?id={{item.id}}&amp;item={{selected}}">♥</a>
-                    {% else %}
-                        <a href="/mainapp/add_to_favorites/?id={{item.id}}&amp;item={{selected}}">♡</a>
+                        {% if item.id in favorites %}
+                            <a href="/mainapp/del_from_favorites/?id={{item.id}}&amp;item={{selected}}">♥</a>
+                        {% else %}
+                            <a href="/mainapp/add_to_favorites/?id={{item.id}}&amp;item={{selected}}">♡</a>
+                        {% endif %}
                     {% endif %}
-                {% endif %}
                 </p>
                 <a href="{{selected}}/?id={{item.id}}&amp;item={{selected}}">{{item.name}}</a>
                 {% if selected == "series" %}
