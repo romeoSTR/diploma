@@ -67,6 +67,30 @@ def current_movie(request):
     return render(request, "item.html", {"item": item, "selected": "movie"})
 
 
+def set_mark(request):
+    mark = int(request.GET.get("mark"))
+    id = request.GET.get("item")
+    selected = request.GET.get("selected")
+    user = request.user
+    profile = UserProfile.get_by_username(user)
+    if selected == 'film':
+        item = Film.get(id)
+        profile.marks["film"].append(item.id)
+    elif selected == 'series':
+        item = Series.get(id)
+        profile.marks["series"].append(item.id)
+    else:
+        item = Movie.get(id)
+        profile.marks["movies"].append(item.id)
+    item.marks += mark
+    item.rating = item.marks / item.marks_count
+    item.marks_count += 1
+    item.save()
+    profile.save()
+    return render(request, "item.html", {"item": item, "selected": selected})
+
+
+
 def authorization(request):
     return render(request, "login.html")
 
@@ -368,6 +392,21 @@ def show_subscriptions(request):
     return render(request, "main.html", {"selected": "profile", "profile": profile, "subscriptions": 1, "subs": subs})
 
 
+def show_profile_comments(request):
+    username = request.GET.get("username")
+    profile = UserProfile.get_by_username(username)
+    comments = profile.get_all_user_comments()
+    return render(request, 'main.html', {"selected": "profile", "profile": profile, "comments": 1, "profile_comments": comments})
+
+
+def show_profile_reviews(request):
+    username = request.GET.get("username")
+    profile = UserProfile.get_by_username(username)
+    reviews = profile.get_all_user_reviews()
+    return render(request, 'main.html',
+                  {"selected": "profile", "profile": profile, "reviews": 1, "profile_reviews": reviews})
+
+
 def edit_profile(request):
     username = request.GET.get("username")
     profile = UserProfile.get_by_username(username)
@@ -443,3 +482,55 @@ def delete_sub_on_profile(request):
     news_for_sub.save()
     news_for_user.save()
     return render(request, "main.html", {"selected": "profile", "profile": user_profile})
+
+
+def like_comment(request):
+    username = request.user
+    profile = UserProfile.get_by_username(username)
+    item_type= request.GET.get("item")
+    if item_type == "film":
+        item = Film.get(request.GET.get("id"))
+        comment = FilmComment.get(request.GET.get("comment"))
+        profile.marks["comment_film"].append(comment.id)
+    elif item_type == "series":
+        item = Series.get(request.GET.get("id"))
+        comment = SeriesComment.get(request.GET.get("comment"))
+        profile.marks["comment_series"].append(comment.id)
+    elif item_type == "movie":
+        item = Movie.get(request.GET.get("id"))
+        comment = MovieComment.get(request.GET.get("comment"))
+        profile.marks["comment_movie"].append(comment.id)
+    if request.GET.get("like") == "1":
+        comment.likes += 1
+    else:
+        comment.dislikes += 1
+    profile.save()
+    comment.save()
+    comments = item.get_comments()
+    return render(request, "item.html", {"comments": comments, "selected":item_type, "item": item})
+
+
+def like_review(request):
+    username = request.user
+    profile = UserProfile.get_by_username(username)
+    item_type = request.GET.get("item")
+    if item_type == "film":
+        item = Film.get(request.GET.get("id"))
+        review = FilmReview.get(request.GET.get("review"))
+        profile.marks["review_film"].append(review.id)
+    elif item_type == "series":
+        item = Series.get(request.GET.get("id"))
+        review = SeriesReview.get(request.GET.get("review"))
+        profile.marks["review_series"].append(review.id)
+    elif item_type == "movie":
+        item = Movie.get(request.GET.get("id"))
+        review = MovieReview.get(request.GET.get("review"))
+        profile.marks["review_movie"].append(review.id)
+    if request.GET.get("like") == "1":
+        review.likes += 1
+    else:
+        review.dislikes += 1
+    profile.save()
+    review.save()
+    reviews = item.get_comments()
+    return render(request, "item.html", {"reviews": reviews, "selected": item_type, "item": item})

@@ -193,6 +193,7 @@ body {
 
 .comment_or_review p1{
     float: right;
+    margin-left: 5px;
     margin-right: 5px;
 }
 
@@ -290,6 +291,16 @@ body {
     border-radius: 5px;
 }
 
+.mark{
+    float: right;
+    margin-right: 15px;
+}
+
+
+.mark a{
+    text-decoration: none;
+    color: black;
+}
 
 
 

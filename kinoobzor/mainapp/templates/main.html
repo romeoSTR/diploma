@@ -67,7 +67,7 @@
                 <p class="info">
                     Комментариев:{{item.get_count_of_comments}}
                     Рецензий:{{item.get_count_of_reviews}}
-                    Оценка:{{item.rating}}
+                    Оценка:{{item.rating|floatformat:1}}
                     {% if user.is_authenticated %}
                         {% if item.id in favorites %}
                             <a href="/mainapp/del_from_favorites/?id={{item.id}}&amp;item={{selected}}">♥</a>
@@ -116,6 +116,16 @@
                 <a class="active" href="/mainapp/subscribers/?username={{profile.username}}">Подписчики</a>
             {% else %}
                 <a href="/mainapp/subscribers/?username={{profile.username}}">Подписчики</a>
+            {% endif %}
+            {% if comments %}
+                <a class="active" href="/mainapp/profile_comments/?username={{profile.username}}">Комментарии</a>
+            {% else %}
+                <a href="/mainapp/profile_comments/?username={{profile.username}}">Комментарии</a>
+            {% endif %}
+            {% if reviews %}
+                <a class="active" href="/mainapp/profile_reviews/?username={{profile.username}}">Рецензии</a>
+            {% else %}
+                <a href="/mainapp/profile_reviews/?username={{profile.username}}">Рецензии</a>
             {% endif %}
             {% if user.get_username == profile.username %}
                 {% if edit %}
@@ -202,6 +212,55 @@
                 </table>
                  <input type="submit" value="Сохранить изменения">
             </form>
+        {% endif %}
+
+        {% if comments %}
+            {% for comment in profile_comments %}
+                <div class="comment_or_review">
+                    {% if comment.film_id %}
+                        <a href="/mainapp/film/?id={{comment.film_id.id}}&amp;item=film">{{comment.film_id.name}}</a>
+                    {% elif comment.series_id %}
+                        <a href="/mainapp/series/?id={{comment.series_id.id}}&amp;item=series">{{comment.series_id.name}}</a>
+                    {% elif comment.movie_id %}
+                        <a href="/mainapp/movie/?id={{comment.movie_id.id}}&amp;item=movie">{{comment.movie_id.name}}</a>
+                    {% endif %}
+                    <p1>{{comment.date_published}}</p1>
+                    <p>{{comment.text}}</p>
+                    {% if comment.author_id.username == user.get_username %}
+                        <a class="delete" href="/mainapp/delete_comment/?id={{item.id}}&amp;item={{selected}}&amp;comment={{comment.id}}">Удалить</a>
+                    {% else %}
+                        <p1>{{comment.dislikes}} &#128078; {{comment.likes}} &#128077;</p1>
+                    {% endif %}
+                    <br><br>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if reviews %}
+            {% for review in profile_reviews %}
+                <div class="comment_or_review">
+                    {% if review.film_id %}
+                        <a href="/mainapp/film/?id={{review.film_id.id}}&amp;item=film">{{review.film_id.name}}</a>
+                    {% elif review.series_id %}
+                        <a href="/mainapp/series/?id={{review.series_id.id}}&amp;item=series">{{review.series_id.name}}</a>
+                    {% elif review.movie_id %}
+                        <a href="/mainapp/movie/?id={{review.movie_id.id}}&amp;item=movie">{{review.movie_id.name}}</a>
+                    {% endif %}
+                    <p1>{{review.date_published}}</p1><br><br>
+                    {% if review.is_positive == True %}
+                        <p2>{{review.text}}</p2>
+                    {% else %}
+                        <p3>{{review.text}}</p3>
+                    {% endif %}
+                    <br>
+                    {% if review.author_id.username == user.get_username %}
+                        <a class="delete" href="/mainapp/delete_review/?id={{item.id}}&amp;item={{selected}}&amp;review={{review.id}}">Удалить</a>
+                    {% else %}
+                        <p1>{{review.dislikes}} &#128078; {{review.likes}} &#128077;</p1>
+                    {% endif %}
+                    <br><br>
+                </div>
+            {% endfor %}
         {% endif %}
     {% endif %}
 </body>

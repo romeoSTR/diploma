@@ -11,11 +11,13 @@ class Film(models.Model):
     year = models.IntegerField(null=False)
     genre = models.CharField(max_length=100)
     rating = models.FloatField(default=0.0)
+    marks_count = models.IntegerField(default=1)
+    marks = models.IntegerField(default=0)
     poster = models.ImageField(upload_to='images', blank=True)
 
     def get_info(self) -> str:
         return f"{self.name} ({self.year})\nРежиссер: {self.director}\n" \
-               f"Жанр: {self.genre}\nОценка: {self.rating} "
+               f"Жанр: {self.genre}\nОценка: {float('{:.1f}'.format(self.rating))} "
 
     def get_count_of_comments(self) -> int:
         count = FilmComment.objects.filter(film_id=self.id).count()
@@ -37,6 +39,14 @@ class Film(models.Model):
     def get(film_id: int) -> 'Film':
         return Film.objects.filter(id=film_id)[0]
 
+    def get_marked_users(self):
+        users = UserProfile.objects.all()
+        usernames = []
+        for user in users:
+            if self.id in user.marks["film"]:
+                usernames.append(user.username)
+        return usernames
+
 
 class Series(models.Model):
     name = models.CharField(max_length=50)
@@ -47,6 +57,8 @@ class Series(models.Model):
     genre = models.CharField(max_length=100)
     rating = models.FloatField(default=0.0)
     poster = models.ImageField(upload_to='images', blank=True)
+    marks_count = models.IntegerField(default=1)
+    marks = models.IntegerField(default=0)
 
     def get_info(self):
         if self.year_end is None:
@@ -54,7 +66,7 @@ class Series(models.Model):
         else:
             year = f"{self.year_start} - {self.year_end}"
         return f"{self.name} ({year})\nРежиссер: {self.director}\n" \
-               f"Жанр: {self.genre}\nОценка: {self.rating} "
+               f"Жанр: {self.genre}\nОценка: {float('{:.1f}'.format(self.rating))} "
 
     def get_count_of_comments(self) -> int:
         count = SeriesComment.objects.filter(series_id=self.id).count()
@@ -78,6 +90,14 @@ class Series(models.Model):
         else:
             return f"{self.year_start} - {self.year_end}"
 
+    def get_marked_users(self):
+        users = UserProfile.objects.all()
+        usernames = []
+        for user in users:
+            if self.id in user.marks["series"]:
+                usernames.append(user.username)
+        return usernames
+
     @staticmethod
     def get(series_id: int) -> 'Series':
         return Series.objects.filter(id=series_id)[0]
@@ -91,10 +111,12 @@ class Movie(models.Model):
     genre = models.CharField(max_length=100)
     rating = models.FloatField(default=0.0)
     poster = models.ImageField(upload_to='images', blank=True)
+    marks = models.IntegerField(default=0)
+    marks_count = models.IntegerField(default=1)
 
     def get_info(self):
         return f"{self.name} ({self.year})\nРежиссер: {self.director}\n" \
-               f"Жанр: {self.genre}\nОценка: {self.rating} "
+               f"Жанр: {self.genre}\nОценка: {float('{:.1f}'.format(self.rating))}"
 
     def get_count_of_comments(self) -> int:
         count = MovieComment.objects.filter(movie_id=self.id).count()
@@ -112,6 +134,14 @@ class Movie(models.Model):
         reviews = MovieReview.objects.filter(movie_id=self.id)
         return reviews
 
+    def get_marked_users(self):
+        users = UserProfile.objects.all()
+        usernames = []
+        for user in users:
+            if self.id in user.marks["movies"]:
+                usernames.append(user.username)
+        return usernames
+
     @staticmethod
     def get(movie_id: int) -> 'Movie':
         return Movie.objects.filter(id=movie_id)[0]
@@ -124,10 +154,9 @@ class UserProfile(models.Model):
     birthday = models.DateField(null=False)
     about = models.TextField(null=False)
     photo = models.ImageField(upload_to='images', blank=True, default='images/default.jpg')
-    #{"film":[id1,id2,id3],"series":[id1,id2],"movies":[id1,id2],"comments_film"[id1,id2]
-    # "comments_series:[id1,id2], "comments_movies":[id1,id2],"review_film":[id1,id2],
-    # "review_series: [id1,id2], "review_movie":[id,id2]
-    marks = models.JSONField(blank=True, default=dict())
+    marks = models.JSONField(blank=True, default={"film":[], "series":[], "movies":[],
+                                                  "comment_film":[], "comment_series":[], "comment_movies":[],
+                                                  "review_film":[], "review_series":[], "review_movie":[]})
 
     @staticmethod
     def get(profile_id: int) -> 'UserProfile':
@@ -213,6 +242,32 @@ class UserProfile(models.Model):
             names.append(sub.sub_id.username)
         return names
 
+    def get_all_user_comments(self):
+        films = FilmComment.objects.filter(author_id=self.id)
+        series = SeriesComment.objects.filter(author_id=self.id)
+        movies = MovieComment.objects.filter(author_id=self.id)
+        comments = []
+        for item in films:
+            comments.append(item)
+        for item in series:
+            comments.append(item)
+        for item in movies:
+            comments.append(item)
+        return comments
+
+    def get_all_user_reviews(self):
+        films = FilmReview.objects.filter(author_id=self.id)
+        series = SeriesReview.objects.filter(author_id=self.id)
+        movies = MovieReview.objects.filter(author_id=self.id)
+        reviews = []
+        for item in films:
+            reviews.append(item)
+        for item in series:
+            reviews.append(item)
+        for item in movies:
+            reviews.append(item)
+        return reviews
+
 
 class FilmComment(models.Model):
     author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
@@ -225,6 +280,14 @@ class FilmComment(models.Model):
     @staticmethod
     def get(id: int):
         return FilmComment.objects.filter(id=id)[0]
+
+    def get_marked_usernames(self):
+        users = UserProfile.objects.all()
+        usernames = []
+        for user in users:
+            if self.id in user.marks["comment_film"]:
+                usernames.append(user.username)
+        return usernames
 
 
 class SeriesComment(models.Model):
@@ -239,6 +302,14 @@ class SeriesComment(models.Model):
     def get(id: int):
         return SeriesComment.objects.filter(id=id)[0]
 
+    def get_marked_usernames(self):
+        users = UserProfile.objects.all()
+        usernames = []
+        for user in users:
+            if self.id in user.marks["comment_series"]:
+                usernames.append(user.username)
+        return usernames
+
 
 class MovieComment(models.Model):
     author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
@@ -251,6 +322,14 @@ class MovieComment(models.Model):
     @staticmethod
     def get(id: int):
         return MovieComment.objects.filter(id=id)[0]
+
+    def get_marked_usernames(self):
+        users = UserProfile.objects.all()
+        usernames = []
+        for user in users:
+            if self.id in user.marks["comment_movie"]:
+                usernames.append(user.username)
+        return usernames
 
 
 class FilmReview(models.Model):
@@ -266,6 +345,14 @@ class FilmReview(models.Model):
     def get(id: int):
         return FilmReview.objects.filter(id=id)[0]
 
+    def get_marked_usernames(self):
+        users = UserProfile.objects.all()
+        usernames = []
+        for user in users:
+            if self.id in user.marks["review_film"]:
+                usernames.append(user.username)
+        return usernames
+
 
 class SeriesReview(models.Model):
     author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
@@ -280,6 +367,14 @@ class SeriesReview(models.Model):
     def get(id: int):
         return SeriesReview.objects.filter(id=id)[0]
 
+    def get_marked_usernames(self):
+        users = UserProfile.objects.all()
+        usernames = []
+        for user in users:
+            if self.id in user.marks["review_series"]:
+                usernames.append(user.username)
+        return usernames
+
 
 class MovieReview(models.Model):
     author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
@@ -293,6 +388,14 @@ class MovieReview(models.Model):
     @staticmethod
     def get(id: int):
         return MovieReview.objects.filter(id=id)[0]
+
+    def get_marked_usernames(self):
+        users = UserProfile.objects.all()
+        usernames = []
+        for user in users:
+            if self.id in user.marks["review_movie"]:
+                usernames.append(user.username)
+        return usernames
 
 class UserFavoriteFilms(models.Model):
     user_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
