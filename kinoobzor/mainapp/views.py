@@ -23,33 +23,55 @@ def main(request):
 
 def films(request):
     user = request.user
+    page = int(request.GET.get("page"))
+    offset = page * 5
     try:
         profile = UserProfile.get_by_username(user)
-        return render(request, "main.html", {"selected": "film", "items": Film.objects.order_by('-rating'),
-                                             "favorites": profile.get_favorite_films_ids()})
+        return render(request, "main.html", {"selected": "film",
+                                             "items": Film.objects.order_by('-rating')[offset:(offset + 5)],
+                                             "favorites": profile.get_favorite_films_ids(), "page": page,
+                                             "count": range(Film.get_pages())})
     except:
-        return render(request, "main.html", {"selected": "film", "items": Film.objects.order_by('-rating')})
+        return render(request, "main.html", {"selected": "film", "items": Film.objects.order_by('-rating')[offset:(offset + 5)],
+                                             "page": page,
+                                             "count": range(Film.get_pages())
+                                             })
 
 
 def series(request):
     user = request.user
+    page = int(request.GET.get("page"))
+    offset = page * 5
     try:
         profile = UserProfile.get_by_username(user)
-        return render(request, "main.html", {"selected": "series", "items": Series.objects.order_by('-rating'),
-                                             "favorites": profile.get_favorite_series_ids()})
+        return render(request, "main.html", {"selected": "series", "items": Series.objects.order_by('-rating')[offset:(offset + 5)],
+                                             "favorites": profile.get_favorite_series_ids(),
+                                             "page": page,
+                                             "count": range(Series.get_pages())
+                                             })
     except:
-        return render(request, "main.html", {"selected": "series", "items": Series.objects.order_by('-rating')})
+        return render(request, "main.html", {"selected": "series", "items": Series.objects.order_by('-rating')[offset:(offset + 5)],
+                                             "page": page,
+                                             "count": range(Series.get_pages())
+                                             })
 
 
 def movies(request):
     user = request.user
+    page = int(request.GET.get("page"))
+    offset = page * 5
     try:
         profile = UserProfile.get_by_username(user)
-        return render(request, "main.html", {"selected": "movie", "items": Movie.objects.order_by('-rating'),
+        return render(request, "main.html", {"selected": "movie", "items": Movie.objects.order_by('-rating')[offset:(offset + 5)],
+                                             "page": page,
+                                             "count": range(Movie.get_pages()),
                                              "favorites": profile.get_favorite_movies_ids()})
 
     except:
-        return render(request, "main.html", {"selected": "movie", "items": Movie.objects.order_by('-rating')})
+        return render(request, "main.html", {"selected": "movie", "items": Movie.objects.order_by('-rating')[offset:(offset + 5)],
+                                             "page": page,
+                                             "count": range(Movie.get_pages()),
+                                             })
 
 
 def current_film(request):

@@ -302,5 +302,28 @@ body {
     color: black;
 }
 
+.paginator{
+    margin-top: 10px;
+    font-size: 20px;
+    text-align:center;
+}
+
+.paginator a{
+    text-decoration: none;
+    color: black;
+    margin-right: 10px;
+    border: 2px solid black;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.paginator a.active{
+    text-decoration: none;
+    font-style: solid;
+    font-size: 30px;
+    margin-right: 10px;
+    background-color: white;
+    color: black;
+}
 
 

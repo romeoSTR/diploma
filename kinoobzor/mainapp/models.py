@@ -1,3 +1,5 @@
+import math
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -39,6 +41,12 @@ class Film(models.Model):
     def get(film_id: int) -> 'Film':
         return Film.objects.filter(id=film_id)[0]
 
+    @staticmethod
+    def get_pages():
+        films = Film.objects.count()
+        pages = films / 5
+        return math.ceil(pages)
+
     def get_marked_users(self):
         users = UserProfile.objects.all()
         usernames = []
@@ -59,6 +67,12 @@ class Series(models.Model):
     poster = models.ImageField(upload_to='images', blank=True)
     marks_count = models.IntegerField(default=1)
     marks = models.IntegerField(default=0)
+
+    @staticmethod
+    def get_pages():
+        series = Series.objects.count()
+        pages = series / 5
+        return math.ceil(pages)
 
     def get_info(self):
         if self.year_end is None:
@@ -113,6 +127,13 @@ class Movie(models.Model):
     poster = models.ImageField(upload_to='images', blank=True)
     marks = models.IntegerField(default=0)
     marks_count = models.IntegerField(default=1)
+
+    @staticmethod
+    def get_pages():
+        movies = Movie.objects.count()
+        pages = movies / 5
+        return math.ceil(pages)
+
 
     def get_info(self):
         return f"{self.name} ({self.year})\nРежиссер: {self.director}\n" \

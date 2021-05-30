@@ -1,5 +1,6 @@
 <head>
     {% load static %}
+    {% load tag_library %}
     <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}" />
 </head>
 <body>
@@ -14,19 +15,19 @@
             <a href="/mainapp/main">Главная</a>
         {% endif %}
         {% if selected == "film" %}
-            <a class="active" href="/mainapp/filmss">Фильмы</a>
+            <a class="active" href="/mainapp/filmss/?page=0">Фильмы</a>
         {% else %}
-            <a href="/mainapp/filmss">Фильмы</a>
+            <a href="/mainapp/filmss/?page=0">Фильмы</a>
         {% endif %}
         {% if selected == "series" %}
-          <a class="active" href="/mainapp/seriess">Сериалы</a>
+          <a class="active" href="/mainapp/seriess/?page=0">Сериалы</a>
         {% else %}
-            <a href="/mainapp/seriess">Сериалы</a>
+            <a href="/mainapp/seriess/?page=0">Сериалы</a>
         {% endif %}
         {% if selected == "movie" %}
-          <a class="active" href="/mainapp/movies">Мультфильмы</a>
+          <a class="active" href="/mainapp/movies/?page=0">Мультфильмы</a>
         {% else %}
-            <a href="/mainapp/movies">Мультфильмы</a>
+            <a href="/mainapp/movies/?page=0">Мультфильмы</a>
         {% endif %}
         {% if not user.is_authenticated %}
             <a class="authorization" href="/accounts/login">Вход</a>
@@ -76,7 +77,7 @@
                         {% endif %}
                     {% endif %}
                 </p>
-                <a href="{{selected}}/?id={{item.id}}&amp;item={{selected}}">{{item.name}}</a>
+                <a href="/mainapp/{{selected}}/?id={{item.id}}&amp;item={{selected}}">{{item.name}}</a>
                 {% if selected == "series" %}
                     ({{item.get_years}})
                 {% else %}
@@ -86,6 +87,19 @@
                 <p>{{item.director}}</p>
             </div>
         {% endfor %}
+        {% if count %}
+            <div class="paginator">
+                <ul>
+                    {% for number in count %}
+                        {% if number == page|to_int %}
+                            <a class="active" href="/mainapp/{{selected|add_ss_to_item}}/?page={{number}}">{{forloop.counter}}</a>
+                        {% else %}
+                            <a href="/mainapp/{{selected|add_ss_to_item}}/?page={{number}}">{{forloop.counter}}</a>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
     {% endif %}
 
     {% if profile %}
