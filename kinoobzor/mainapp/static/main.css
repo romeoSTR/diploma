@@ -1,3 +1,8 @@
+a {
+    font-size: 20px;
+    color: black;
+}
+
 .kinoobzor{
     background-color: grey;
     text-align: center;
@@ -26,7 +31,7 @@
 /* Style the links inside the navigation bar */
 .topnav a {
     float: left;
-    color: #f2f2f2;
+    color: white;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
@@ -35,7 +40,7 @@
 
 /* Change the color of links on hover */
 .topnav a:hover {
-    background-color: #ddd;
+    background-color: white;
     color: black;
 }
 

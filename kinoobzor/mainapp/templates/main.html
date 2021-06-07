@@ -103,58 +103,61 @@
     {% endif %}
 
     {% if profile %}
-        <div class="profile">
-            {% if profile.photo %}
-                <img src="{{profile.photo.url}}" width="250" height="250">
-            {% endif %}
-            <p>{{profile.username}}</p>
-            <p>{{profile.about}}</p>
-            <p>{{profile.birthday}}</p>
-            <p>Подписчиков: {{profile.get_subscribers_count}}</p>
-            <p>Подписки: {{profile.get_subscriptions_count}}</p>
-            <p>Комментариев: {{profile.get_count_of_comments}}</p>
-            <p>Рецензий: {{profile.get_count_of_reviews}}</p>
-        </div><br>
-        <div class="topnav">
-            {% if favorites %}
-                <a class="active" href="/mainapp/favorites/?username={{profile.username}}" >Избранное</a>
-            {% else %}
-                <a href="/mainapp/favorites/?username={{profile.username}}">Избранное</a>
-            {% endif %}
-            {% if subscriptions %}
-                <a class="active" href="/mainapp/subscriptions/?username={{profile.username}}">Подписки</a>
-            {% else %}
-                <a href="/mainapp/subscriptions/?username={{profile.username}}">Подписки</a>
-            {% endif %}
-            {% if subscribers %}
-                <a class="active" href="/mainapp/subscribers/?username={{profile.username}}">Подписчики</a>
-            {% else %}
-                <a href="/mainapp/subscribers/?username={{profile.username}}">Подписчики</a>
-            {% endif %}
-            {% if comments %}
-                <a class="active" href="/mainapp/profile_comments/?username={{profile.username}}">Комментарии</a>
-            {% else %}
-                <a href="/mainapp/profile_comments/?username={{profile.username}}">Комментарии</a>
-            {% endif %}
-            {% if reviews %}
-                <a class="active" href="/mainapp/profile_reviews/?username={{profile.username}}">Рецензии</a>
-            {% else %}
-                <a href="/mainapp/profile_reviews/?username={{profile.username}}">Рецензии</a>
-            {% endif %}
-            {% if user.get_username == profile.username %}
-                {% if edit %}
-                    <a class="authorization_active" href="/mainapp/edit/?username={{profile.username}}">Редактирование профиля</a>
-                {% else %}
-                    <a class="authorization" href="/mainapp/edit/?username={{profile.username}}">Редактирование профиля</a>
+        {% if profile == "admin" %}
+        {% else %}
+            <div class="profile">
+                {% if profile.photo %}
+                    <img src="{{profile.photo.url}}" width="250" height="250">
                 {% endif %}
-            {% else %}
-                {% if user.get_username in profile.get_subs_usernames  %}
-                    <a class="authorization" href="/mainapp/delete_sub/?username={{profile.username}}">Отписаться</a>
+                <p>{{profile.username}}</p>
+                <p>{{profile.about}}</p>
+                <p>{{profile.birthday}}</p>
+                <p>Подписчиков: {{profile.get_subscribers_count}}</p>
+                <p>Подписки: {{profile.get_subscriptions_count}}</p>
+                <p>Комментариев: {{profile.get_count_of_comments}}</p>
+                <p>Рецензий: {{profile.get_count_of_reviews}}</p>
+            </div><br>
+            <div class="topnav">
+                {% if favorites %}
+                    <a class="active" href="/mainapp/favorites/?username={{profile.username}}" >Избранное</a>
                 {% else %}
-                    <a class="authorization" href="/mainapp/subscribe/?username={{profile.username}}">Подписаться</a>
+                    <a href="/mainapp/favorites/?username={{profile.username}}">Избранное</a>
                 {% endif %}
-            {% endif %}
-        </div>
+                {% if subscriptions %}
+                    <a class="active" href="/mainapp/subscriptions/?username={{profile.username}}">Подписки</a>
+                {% else %}
+                    <a href="/mainapp/subscriptions/?username={{profile.username}}">Подписки</a>
+                {% endif %}
+                {% if subscribers %}
+                    <a class="active" href="/mainapp/subscribers/?username={{profile.username}}">Подписчики</a>
+                {% else %}
+                    <a href="/mainapp/subscribers/?username={{profile.username}}">Подписчики</a>
+                {% endif %}
+                {% if comments %}
+                    <a class="active" href="/mainapp/profile_comments/?username={{profile.username}}">Комментарии</a>
+                {% else %}
+                    <a href="/mainapp/profile_comments/?username={{profile.username}}">Комментарии</a>
+                {% endif %}
+                {% if reviews %}
+                    <a class="active" href="/mainapp/profile_reviews/?username={{profile.username}}">Рецензии</a>
+                {% else %}
+                    <a href="/mainapp/profile_reviews/?username={{profile.username}}">Рецензии</a>
+                {% endif %}
+                {% if user.get_username == profile.username %}
+                    {% if edit %}
+                        <a class="authorization_active" href="/mainapp/edit/?username={{profile.username}}">Редактирование профиля</a>
+                    {% else %}
+                        <a class="authorization" href="/mainapp/edit/?username={{profile.username}}">Редактирование профиля</a>
+                    {% endif %}
+                {% else %}
+                    {% if user.get_username in profile.get_subs_usernames  %}
+                        <a class="authorization" href="/mainapp/delete_sub/?username={{profile.username}}">Отписаться</a>
+                    {% else %}
+                        <a class="authorization" href="/mainapp/subscribe/?username={{profile.username}}">Подписаться</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endif %}
 
         {% if favorites %}
             <div class="favorites">

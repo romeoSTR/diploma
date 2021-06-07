@@ -289,6 +289,10 @@ class UserProfile(models.Model):
             reviews.append(item)
         return reviews
 
+    @staticmethod
+    def get_users():
+        return UserProfile.objects.all()
+
 
 class FilmComment(models.Model):
     author_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)

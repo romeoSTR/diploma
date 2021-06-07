@@ -76,17 +76,46 @@ def movies(request):
 
 def current_film(request):
     item = Film.get(request.GET.get("id"))
-    return render(request, "item.html", {"item": item, "selected": "film"})
+    count_comments = item.get_comments().count()
+    count_reviews = item.get_reviews().count()
+    if count_comments > 0 and count_reviews > 0:
+        return render(request, "item.html", {"item": item, "selected": "film", "count_comments": count_comments,
+                                             "count_reviews": count_reviews})
+    elif count_comments > 0:
+        return render(request, "item.html", {"item": item, "selected": "film", "count_comments": count_comments})
+    elif count_reviews > 0:
+        return render(request, "item.html", {"item": item, "selected": "film", "count_reviews": count_reviews})
+    else:
+        return render(request, "item.html", {"item": item, "selected": "film"})
 
 
 def current_series(request):
     item = Series.get(request.GET.get("id"))
-    return render(request, "item.html", {"item": item, "selected": "series"})
+    count_comments = item.get_comments().count()
+    count_reviews = item.get_reviews().count()
+    if count_comments > 0 and count_reviews > 0:
+        return render(request, "item.html", {"item": item, "selected": "series", "count_comments": count_comments, "count_reviews": count_reviews})
+    elif count_comments > 0:
+        return render(request, "item.html", {"item": item, "selected": "series", "count_comments": count_comments})
+    elif count_reviews > 0:
+        return render(request, "item.html", {"item": item, "selected": "series", "count_reviews": count_reviews})
+    else:
+        return render(request, "item.html", {"item": item, "selected": "series"})
 
 
 def current_movie(request):
     item = Movie.get(request.GET.get("id"))
-    return render(request, "item.html", {"item": item, "selected": "movie"})
+    count_comments = item.get_comments().count()
+    count_reviews = item.get_reviews().count()
+    if count_comments > 0 and count_reviews > 0:
+        return render(request, "item.html", {"item": item, "selected": "movie", "count_comments": count_comments,
+                                             "count_reviews": count_reviews})
+    elif count_comments > 0:
+        return render(request, "item.html", {"item": item, "selected": "movie", "count_comments": count_comments})
+    elif count_reviews > 0:
+        return render(request, "item.html", {"item": item, "selected": "movie", "count_reviews": count_reviews})
+    else:
+        return render(request, "item.html", {"item": item, "selected": "movie"})
 
 
 def set_mark(request):
@@ -131,9 +160,19 @@ def show_comments(request):
     else:
         item = Movie.get(request.GET.get("id"))
     comments = item.get_comments()
+    reviews = item.get_reviews().count()
     if len(comments) == 0:
         comments = "Нет комментариев"
-    return render(request, "item.html", {"comments": comments, "item": item, "selected": item_type})
+        if reviews == 0:
+            return render(request, "item.html", {"comments": comments, "item": item, "selected": item_type})
+        else:
+            return render(request, "item.html", {"comments": comments, "item": item, "selected": item_type, "count_reviews": reviews})
+    else:
+        if reviews == 0:
+            return render(request, "item.html", {"comments": comments, "item": item, "selected": item_type, "count_comments": comments.count()})
+        else:
+            return render(request, "item.html", {"comments": comments, "item": item, "selected": item_type,
+                                                 "count_comments": comments.count(), "count_reviews": reviews})
 
 
 def show_reviews(request):
@@ -145,9 +184,20 @@ def show_reviews(request):
     else:
         item = Movie.get(request.GET.get("id"))
     reviews = item.get_reviews()
+    comments = item.get_comments().count()
     if len(reviews) == 0:
         reviews = "Нет рецензий"
-    return render(request, "item.html", {"reviews": reviews, "item": item, "selected": item_type})
+        if comments == 0:
+            return render(request, "item.html", {"reviews": reviews, "item": item, "selected": item_type})
+        else:
+            return render(request, "item.html", {"reviews": reviews, "item": item, "selected": item_type, "count_comments": comments})
+    else:
+        if comments == 0:
+            return render(request, "item.html",
+                          {"reviews": reviews, "item": item, "selected": item_type, "count_reviews": reviews.count()})
+        else:
+            return render(request, "item.html",
+                          {"reviews": reviews, "item": item, "selected": item_type, "count_reviews": reviews.count(),"count_comments": comments})
 
 
 def finish_or_repeat_registration(request):
@@ -175,8 +225,13 @@ def finish_or_repeat_registration(request):
 
 
 def profile(request):
-    profile = UserProfile.get_by_username(request.GET.get("username"))
-    return render(request, "main.html", {"selected": "profile", "profile": profile})
+    name = request.GET.get("username")
+    if name == "admin":
+        profile = "admin"
+        return render(request, "main.html", {"selected": "profile", "profile": profile})
+    else:
+        profile = UserProfile.get_by_username(name)
+        return render(request, "main.html", {"selected": "profile", "profile": profile})
 
 
 def add_comment(request):
@@ -554,5 +609,5 @@ def like_review(request):
         review.dislikes += 1
     profile.save()
     review.save()
-    reviews = item.get_comments()
+    reviews = item.get_reviews()
     return render(request, "item.html", {"reviews": reviews, "selected": item_type, "item": item})

@@ -57,37 +57,53 @@
         {% if user.is_authenticated %}
             <div class="topnav">
                 {% if comments %}
-                    <a class="active" href='/mainapp/{{selected}}/comments/?id={{item.id}}&amp;item={{selected}}'>Комментарии </a>
+                    {% if count_comments %}
+                        <a class="active" href='/mainapp/{{selected}}/comments/?id={{item.id}}&amp;item={{selected}}'>Комментарии ({{count_comments}})</a>
+                    {% else %}
+                        <a class="active" href='/mainapp/{{selected}}/comments/?id={{item.id}}&amp;item={{selected}}'>Комментарии </a>
+                    {% endif %}
                     {% if add_comment %}
                         <a class="authorization_active" href="/mainapp/{{selected}}/comment/add_comment/?id={{item.id}}&amp;item={{selected}}">Добавить</a>
                     {% else %}
                         <a class="authorization" href="/mainapp/{{selected}}/comment/add_comment/?id={{item.id}}&amp;item={{selected}}">Добавить</a>
                     {% endif %}
                 {% else %}
-                    <a href='/mainapp/{{selected}}/comments/?id={{item.id}}&amp;item={{selected}}'>Комментарии </a>
+                    {% if count_comments %}
+                        <a href='/mainapp/{{selected}}/comments/?id={{item.id}}&amp;item={{selected}}'>Комментарии ({{count_comments}})</a>
+                    {% else %}
+                        <a href='/mainapp/{{selected}}/comments/?id={{item.id}}&amp;item={{selected}}'>Комментарии </a>
+                    {% endif %}
                 {% endif %}
                 {% if reviews %}
-                    <a class="active" href="/mainapp/{{selected}}/reviews/?id={{item.id}}&amp;item={{selected}}">Рецензии</a>
+                    {% if count_reviews %}
+                        <a class="active" href="/mainapp/{{selected}}/reviews/?id={{item.id}}&amp;item={{selected}}">Рецензии ({{count_reviews}})</a>
+                    {% else %}
+                        <a class="active" href="/mainapp/{{selected}}/reviews/?id={{item.id}}&amp;item={{selected}}">Рецензии</a>
+                    {% endif %}
                     {% if add_review %}
                         <a class="authorization_active" href="/mainapp/{{selected}}/review/add_review/?id={{item.id}}&amp;item={{selected}}">Добавить</a>
                     {% else %}
                         <a class="authorization" href="/mainapp/{{selected}}/review/add_review/?id={{item.id}}&amp;item={{selected}}">Добавить</a>
                     {% endif %}
                 {% else %}
-                    <a href="/mainapp/{{selected}}/reviews/?id={{item.id}}&amp;item={{selected}}">Рецензии</a>
+                    {% if count_reviews %}
+                        <a href="/mainapp/{{selected}}/reviews/?id={{item.id}}&amp;item={{selected}}">Рецензии ({{count_reviews}})</a>
+                    {% else %}
+                        <a href="/mainapp/{{selected}}/reviews/?id={{item.id}}&amp;item={{selected}}">Рецензии</a>
+                    {% endif %}
                 {% endif %}
             </div>
             {% if add_comment %}
                 <form method="post" action="/mainapp/save_comment/?id={{item.id}}&amp;item={{selected}}&amp;user={{user.get_username}}" >
                     {% csrf_token %}
-                    {{form.as_table}}
+                    {{form.as_p}}
                     <input type="submit" value="Добавить">
                 </form>
             {% endif %}
             {% if add_review %}
                 <form method="post" action="/mainapp/save_review/?id={{item.id}}&amp;item={{selected}}&amp;user={{user.get_username}}" >
                     {% csrf_token %}
-                    {{form.as_table}}
+                    {{form.as_p}}
                     <input type="submit" value="Добавить">
                 </form>
             {% endif %}
